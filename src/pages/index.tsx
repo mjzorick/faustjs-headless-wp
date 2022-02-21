@@ -6,6 +6,7 @@ import React from 'react';
 import { CTA, Footer, Header, Hero, Posts } from 'components';
 import styles from 'scss/pages/home.module.scss';
 import { client } from 'client';
+import Link from 'next/link';
 
 export default function Page() {
   const { usePosts, useQuery } = client;
@@ -55,6 +56,7 @@ export default function Page() {
             to make building headless WordPress sites fast and fun.
           </p>
         </Hero>
+
         <section className={styles.explore}>
           <div className="wrap">
             <h2>Explore this Example Project</h2>
@@ -152,6 +154,7 @@ export default function Page() {
             </div>
           </div>
         </section>
+
         <Posts
           posts={posts.nodes}
           heading="Latest Posts"
