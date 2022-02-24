@@ -1,0 +1,27 @@
+// CSS for the Award component in components/Awards.tsx.
+
+@import "scss/variables";
+
+.title {
+	color: $color-primary;
+	text-decoration: none;
+}
+
+
+.title a:focus,
+.title a:hover {
+	color: $color-primary;
+}
+
+.wrap {
+	margin: 0 auto;
+	max-width: $content-width;
+	overflow: auto;
+	padding: 0 10px;
+	position: relative;
+	z-index: 1;
+}
+
+.sub-title {
+	font-weight: $font-weight-bold;
+}

@@ -56,7 +56,7 @@ export default function Page() {
             to make building headless WordPress sites fast and fun.
           </p>
         </Hero>
-
+        <a href="/cookies">Cookies</a>
         <section className={styles.explore}>
           <div className="wrap">
             <h2>Explore this Example Project</h2>

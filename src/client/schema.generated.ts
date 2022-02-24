@@ -389,6 +389,8 @@ export enum ContentTypeEnum {
   /** The Type of Content object */
   AWARD = "AWARD",
   /** The Type of Content object */
+  COOKIE = "COOKIE",
+  /** The Type of Content object */
   PAGE = "PAGE",
   /** The Type of Content object */
   POST = "POST",
@@ -462,6 +464,18 @@ export enum ContentTypesOfTagEnum {
   POST = "POST",
 }
 
+/** The Type of Identifier used to fetch a single resource. Default is ID. */
+export enum CookieIdType {
+  /** Identify a resource by the Database ID. */
+  DATABASE_ID = "DATABASE_ID",
+  /** Identify a resource by the (hashed) Global ID. */
+  ID = "ID",
+  /** Identify a resource by the slug. Available to non-hierarchcial Types where the slug is a unique identifier. */
+  SLUG = "SLUG",
+  /** Identify a resource by the URI. */
+  URI = "URI",
+}
+
 /** Input for the createAward mutation */
 export interface CreateAwardInput {
   /** The userId to assign as the author of the object */
@@ -520,6 +534,26 @@ export interface CreateCommentInput {
   parent?: InputMaybe<Scalars["ID"]>;
   /** Type of comment. */
   type?: InputMaybe<Scalars["String"]>;
+}
+
+/** Input for the createCookie mutation */
+export interface CreateCookieInput {
+  /** This is an ID that can be passed to a mutation by the client to track the progress of mutations and catch possible duplicate mutation submissions. */
+  clientMutationId?: InputMaybe<Scalars["String"]>;
+  /** The content of the object */
+  content?: InputMaybe<Scalars["String"]>;
+  /** The date of the object. Preferable to enter as year/month/day (e.g. 01/31/2017) as it will rearrange date as fit if it is not specified. Incomplete dates may have unintended results for example, "2017" as the input will use current date with timestamp 20:17  */
+  date?: InputMaybe<Scalars["String"]>;
+  /** A field used for ordering posts. This is typically used with nav menu items or for special ordering of hierarchical content types. */
+  menuOrder?: InputMaybe<Scalars["Int"]>;
+  /** The password used to protect the content of the object */
+  password?: InputMaybe<Scalars["String"]>;
+  /** The slug of the object */
+  slug?: InputMaybe<Scalars["String"]>;
+  /** The status of the object */
+  status?: InputMaybe<PostStatusEnum>;
+  /** The title of the object */
+  title?: InputMaybe<Scalars["String"]>;
 }
 
 /** Input for the createMediaItem mutation */
@@ -773,6 +807,16 @@ export interface DeleteCommentInput {
   /** Whether the comment should be force deleted instead of being moved to the trash */
   forceDelete?: InputMaybe<Scalars["Boolean"]>;
   /** The deleted comment ID */
+  id: Scalars["ID"];
+}
+
+/** Input for the deleteCookie mutation */
+export interface DeleteCookieInput {
+  /** This is an ID that can be passed to a mutation by the client to track the progress of mutations and catch possible duplicate mutation submissions. */
+  clientMutationId?: InputMaybe<Scalars["String"]>;
+  /** Whether the object should be force deleted instead of being moved to the trash */
+  forceDelete?: InputMaybe<Scalars["Boolean"]>;
+  /** The ID of the Cookie to delete */
   id: Scalars["ID"];
 }
 
@@ -1624,6 +1668,8 @@ export interface PostPostFormatsNodeInput {
 
 /** The status of the object. */
 export enum PostStatusEnum {
+  /** Objects with the acf-disabled status */
+  ACF_DISABLED = "ACF_DISABLED",
   /** Objects with the auto-draft status */
   AUTO_DRAFT = "AUTO_DRAFT",
   /** Objects with the draft status */
@@ -2238,6 +2284,44 @@ export interface RootQueryToContentNodeConnectionWhereArgs {
 export interface RootQueryToContentRevisionUnionConnectionWhereArgs {
   /** The Types of content to filter */
   contentTypes?: InputMaybe<Array<InputMaybe<ContentTypeEnum>>>;
+  /** Filter the connection based on dates */
+  dateQuery?: InputMaybe<DateQueryInput>;
+  /** True for objects with passwords; False for objects without passwords; null for all objects with or without passwords */
+  hasPassword?: InputMaybe<Scalars["Boolean"]>;
+  /** Specific ID of the object */
+  id?: InputMaybe<Scalars["Int"]>;
+  /** Array of IDs for the objects to retrieve */
+  in?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
+  /** Get objects with a specific mimeType property */
+  mimeType?: InputMaybe<MimeTypeEnum>;
+  /** Slug / post_name of the object */
+  name?: InputMaybe<Scalars["String"]>;
+  /** Specify objects to retrieve. Use slugs */
+  nameIn?: InputMaybe<Array<InputMaybe<Scalars["String"]>>>;
+  /** Specify IDs NOT to retrieve. If this is used in the same query as "in", it will be ignored */
+  notIn?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
+  /** What paramater to use to order the objects by. */
+  orderby?: InputMaybe<Array<InputMaybe<PostObjectsConnectionOrderbyInput>>>;
+  /** Use ID to return only children. Use 0 to return only top-level items */
+  parent?: InputMaybe<Scalars["ID"]>;
+  /** Specify objects whose parent is in an array */
+  parentIn?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
+  /** Specify posts whose parent is not in an array */
+  parentNotIn?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
+  /** Show posts with a specific password. */
+  password?: InputMaybe<Scalars["String"]>;
+  /** Show Posts based on a keyword search */
+  search?: InputMaybe<Scalars["String"]>;
+  /** Retrieve posts where post status is in an array. */
+  stati?: InputMaybe<Array<InputMaybe<PostStatusEnum>>>;
+  /** Show posts with a specific status. */
+  status?: InputMaybe<PostStatusEnum>;
+  /** Title of the object */
+  title?: InputMaybe<Scalars["String"]>;
+}
+
+/** Arguments for filtering the RootQueryToCookieConnection connection */
+export interface RootQueryToCookieConnectionWhereArgs {
   /** Filter the connection based on dates */
   dateQuery?: InputMaybe<DateQueryInput>;
   /** True for objects with passwords; False for objects without passwords; null for all objects with or without passwords */
@@ -2926,6 +3010,28 @@ export interface UpdateCommentInput {
   type?: InputMaybe<Scalars["String"]>;
 }
 
+/** Input for the updateCookie mutation */
+export interface UpdateCookieInput {
+  /** This is an ID that can be passed to a mutation by the client to track the progress of mutations and catch possible duplicate mutation submissions. */
+  clientMutationId?: InputMaybe<Scalars["String"]>;
+  /** The content of the object */
+  content?: InputMaybe<Scalars["String"]>;
+  /** The date of the object. Preferable to enter as year/month/day (e.g. 01/31/2017) as it will rearrange date as fit if it is not specified. Incomplete dates may have unintended results for example, "2017" as the input will use current date with timestamp 20:17  */
+  date?: InputMaybe<Scalars["String"]>;
+  /** The ID of the Cookie object */
+  id: Scalars["ID"];
+  /** A field used for ordering posts. This is typically used with nav menu items or for special ordering of hierarchical content types. */
+  menuOrder?: InputMaybe<Scalars["Int"]>;
+  /** The password used to protect the content of the object */
+  password?: InputMaybe<Scalars["String"]>;
+  /** The slug of the object */
+  slug?: InputMaybe<Scalars["String"]>;
+  /** The status of the object */
+  status?: InputMaybe<PostStatusEnum>;
+  /** The title of the object */
+  title?: InputMaybe<Scalars["String"]>;
+}
+
 /** Input for the updateMediaItem mutation */
 export interface UpdateMediaItemInput {
   /** Alternative text to display when mediaItem is not displayed */
@@ -3605,6 +3711,7 @@ export const scalarsEnumsHash: import("gqty").ScalarsEnumsHash = {
   ContentTypesOfCategoryEnum: true,
   ContentTypesOfPostFormatEnum: true,
   ContentTypesOfTagEnum: true,
+  CookieIdType: true,
   Float: true,
   ID: true,
   Int: true,
@@ -3637,6 +3744,11 @@ export const scalarsEnumsHash: import("gqty").ScalarsEnumsHash = {
   UsersConnectionSearchColumnEnum: true,
 };
 export const generatedSchema = {
+  AcfFieldGroup: {
+    __typename: { __type: "String!" },
+    fieldGroupName: { __type: "String" },
+    $on: { __type: "$AcfFieldGroup!" },
+  },
   AtlasContentModelerSettingsSettings: {
     __typename: { __type: "String!" },
     atlasContentModelerUsageTracking: { __type: "String" },
@@ -4256,6 +4368,68 @@ export const generatedSchema = {
     cursor: { __type: "String" },
     node: { __type: "Taxonomy" },
   },
+  Cookie: {
+    __typename: { __type: "String!" },
+    conditionalTags: { __type: "ConditionalTags" },
+    content: {
+      __type: "String",
+      __args: { format: "PostObjectFieldFormatEnum" },
+    },
+    contentType: { __type: "ContentNodeToContentTypeConnectionEdge" },
+    contentTypeName: { __type: "String!" },
+    cookieId: { __type: "Int!" },
+    cookieInfo: { __type: "Cookie_Cookieinfo" },
+    databaseId: { __type: "Int!" },
+    date: { __type: "String" },
+    dateGmt: { __type: "String" },
+    desiredSlug: { __type: "String" },
+    editingLockedBy: { __type: "ContentNodeToEditLockConnectionEdge" },
+    enclosure: { __type: "String" },
+    enqueuedScripts: {
+      __type: "ContentNodeToEnqueuedScriptConnection",
+      __args: { after: "String", before: "String", first: "Int", last: "Int" },
+    },
+    enqueuedStylesheets: {
+      __type: "ContentNodeToEnqueuedStylesheetConnection",
+      __args: { after: "String", before: "String", first: "Int", last: "Int" },
+    },
+    featuredImage: { __type: "NodeWithFeaturedImageToMediaItemConnectionEdge" },
+    featuredImageDatabaseId: { __type: "Int" },
+    featuredImageId: { __type: "ID" },
+    guid: { __type: "String" },
+    id: { __type: "ID!" },
+    isContentNode: { __type: "Boolean!" },
+    isPreview: { __type: "Boolean" },
+    isRestricted: { __type: "Boolean" },
+    isTermNode: { __type: "Boolean!" },
+    lastEditedBy: { __type: "ContentNodeToEditLastConnectionEdge" },
+    link: { __type: "String" },
+    modified: { __type: "String" },
+    modifiedGmt: { __type: "String" },
+    preview: { __type: "CookieToPreviewConnectionEdge" },
+    previewRevisionDatabaseId: { __type: "Int" },
+    previewRevisionId: { __type: "ID" },
+    slug: { __type: "String" },
+    status: { __type: "String" },
+    template: { __type: "ContentTemplate" },
+    templates: { __type: "[String]" },
+    title: {
+      __type: "String",
+      __args: { format: "PostObjectFieldFormatEnum" },
+    },
+    uri: { __type: "String" },
+  },
+  CookieToPreviewConnectionEdge: {
+    __typename: { __type: "String!" },
+    node: { __type: "Cookie" },
+  },
+  Cookie_Cookieinfo: {
+    __typename: { __type: "String!" },
+    cookieImage: { __type: "MediaItem" },
+    cookieName: { __type: "String" },
+    fieldGroupName: { __type: "String" },
+    specialDiet: { __type: "[String]" },
+  },
   CreateAwardInput: {
     authorId: { __type: "ID" },
     clientMutationId: { __type: "String" },
@@ -4301,6 +4475,21 @@ export const generatedSchema = {
     clientMutationId: { __type: "String" },
     comment: { __type: "Comment" },
     success: { __type: "Boolean" },
+  },
+  CreateCookieInput: {
+    clientMutationId: { __type: "String" },
+    content: { __type: "String" },
+    date: { __type: "String" },
+    menuOrder: { __type: "Int" },
+    password: { __type: "String" },
+    slug: { __type: "String" },
+    status: { __type: "PostStatusEnum" },
+    title: { __type: "String" },
+  },
+  CreateCookiePayload: {
+    __typename: { __type: "String!" },
+    clientMutationId: { __type: "String" },
+    cookie: { __type: "Cookie" },
   },
   CreateMediaItemInput: {
     altText: { __type: "String" },
@@ -4489,6 +4678,17 @@ export const generatedSchema = {
     __typename: { __type: "String!" },
     clientMutationId: { __type: "String" },
     comment: { __type: "Comment" },
+    deletedId: { __type: "ID" },
+  },
+  DeleteCookieInput: {
+    clientMutationId: { __type: "String" },
+    forceDelete: { __type: "Boolean" },
+    id: { __type: "ID!" },
+  },
+  DeleteCookiePayload: {
+    __typename: { __type: "String!" },
+    clientMutationId: { __type: "String" },
+    cookie: { __type: "Cookie" },
     deletedId: { __type: "ID" },
   },
   DeleteMediaItemInput: {
@@ -6107,6 +6307,36 @@ export const generatedSchema = {
     cursor: { __type: "String" },
     node: { __type: "ContentType" },
   },
+  RootQueryToCookieConnection: {
+    __typename: { __type: "String!" },
+    edges: { __type: "[RootQueryToCookieConnectionEdge]" },
+    nodes: { __type: "[Cookie]" },
+    pageInfo: { __type: "WPPageInfo" },
+  },
+  RootQueryToCookieConnectionEdge: {
+    __typename: { __type: "String!" },
+    cursor: { __type: "String" },
+    node: { __type: "Cookie" },
+  },
+  RootQueryToCookieConnectionWhereArgs: {
+    dateQuery: { __type: "DateQueryInput" },
+    hasPassword: { __type: "Boolean" },
+    id: { __type: "Int" },
+    in: { __type: "[ID]" },
+    mimeType: { __type: "MimeTypeEnum" },
+    name: { __type: "String" },
+    nameIn: { __type: "[String]" },
+    notIn: { __type: "[ID]" },
+    orderby: { __type: "[PostObjectsConnectionOrderbyInput]" },
+    parent: { __type: "ID" },
+    parentIn: { __type: "[ID]" },
+    parentNotIn: { __type: "[ID]" },
+    password: { __type: "String" },
+    search: { __type: "String" },
+    stati: { __type: "[PostStatusEnum]" },
+    status: { __type: "PostStatusEnum" },
+    title: { __type: "String" },
+  },
   RootQueryToEnqueuedScriptConnection: {
     __typename: { __type: "String!" },
     edges: { __type: "[RootQueryToEnqueuedScriptConnectionEdge]" },
@@ -6858,6 +7088,22 @@ export const generatedSchema = {
     comment: { __type: "Comment" },
     success: { __type: "Boolean" },
   },
+  UpdateCookieInput: {
+    clientMutationId: { __type: "String" },
+    content: { __type: "String" },
+    date: { __type: "String" },
+    id: { __type: "ID!" },
+    menuOrder: { __type: "Int" },
+    password: { __type: "String" },
+    slug: { __type: "String" },
+    status: { __type: "PostStatusEnum" },
+    title: { __type: "String" },
+  },
+  UpdateCookiePayload: {
+    __typename: { __type: "String!" },
+    clientMutationId: { __type: "String" },
+    cookie: { __type: "Cookie" },
+  },
   UpdateMediaItemInput: {
     altText: { __type: "String" },
     authorId: { __type: "ID" },
@@ -7476,6 +7722,10 @@ export const generatedSchema = {
       __type: "CreateCommentPayload",
       __args: { input: "CreateCommentInput!" },
     },
+    createCookie: {
+      __type: "CreateCookiePayload",
+      __args: { input: "CreateCookieInput!" },
+    },
     createMediaItem: {
       __type: "CreateMediaItemPayload",
       __args: { input: "CreateMediaItemInput!" },
@@ -7515,6 +7765,10 @@ export const generatedSchema = {
     deleteComment: {
       __type: "DeleteCommentPayload",
       __args: { input: "DeleteCommentInput!" },
+    },
+    deleteCookie: {
+      __type: "DeleteCookiePayload",
+      __args: { input: "DeleteCookieInput!" },
     },
     deleteMediaItem: {
       __type: "DeleteMediaItemPayload",
@@ -7576,6 +7830,10 @@ export const generatedSchema = {
     updateComment: {
       __type: "UpdateCommentPayload",
       __args: { input: "UpdateCommentInput!" },
+    },
+    updateCookie: {
+      __type: "UpdateCookiePayload",
+      __args: { input: "UpdateCookieInput!" },
     },
     updateMediaItem: {
       __type: "UpdateMediaItemPayload",
@@ -7685,6 +7943,24 @@ export const generatedSchema = {
     contentTypes: {
       __type: "RootQueryToContentTypeConnection",
       __args: { after: "String", before: "String", first: "Int", last: "Int" },
+    },
+    cookie: {
+      __type: "Cookie",
+      __args: { asPreview: "Boolean", id: "ID!", idType: "CookieIdType" },
+    },
+    cookieBy: {
+      __type: "Cookie",
+      __args: { cookieId: "Int", id: "ID", slug: "String", uri: "String" },
+    },
+    cookies: {
+      __type: "RootQueryToCookieConnection",
+      __args: {
+        after: "String",
+        before: "String",
+        first: "Int",
+        last: "Int",
+        where: "RootQueryToCookieConnectionWhereArgs",
+      },
     },
     discussionSettings: { __type: "DiscussionSettings" },
     generalSettings: { __type: "GeneralSettings" },
@@ -7900,11 +8176,12 @@ export const generatedSchema = {
   },
   subscription: {},
   [SchemaUnionsKey]: {
-    ContentNode: ["Award", "MediaItem", "Page", "Post", "Scout"],
+    ContentNode: ["Award", "Cookie", "MediaItem", "Page", "Post", "Scout"],
     DatabaseIdentifier: [
       "Award",
       "Category",
       "Comment",
+      "Cookie",
       "MediaItem",
       "Menu",
       "MenuItem",
@@ -7921,6 +8198,7 @@ export const generatedSchema = {
       "Comment",
       "CommentAuthor",
       "ContentType",
+      "Cookie",
       "EnqueuedScript",
       "EnqueuedStylesheet",
       "MediaItem",
@@ -7938,12 +8216,13 @@ export const generatedSchema = {
       "UserRole",
     ],
     NodeWithAuthor: ["Award", "MediaItem", "Page", "Post", "Scout"],
-    NodeWithTemplate: ["Award", "MediaItem", "Page", "Post", "Scout"],
-    NodeWithTitle: ["Award", "MediaItem", "Page", "Post", "Scout"],
+    NodeWithTemplate: ["Award", "Cookie", "MediaItem", "Page", "Post", "Scout"],
+    NodeWithTitle: ["Award", "Cookie", "MediaItem", "Page", "Post", "Scout"],
     UniformResourceIdentifiable: [
       "Award",
       "Category",
       "ContentType",
+      "Cookie",
       "MediaItem",
       "Page",
       "Post",
@@ -7953,23 +8232,50 @@ export const generatedSchema = {
       "User",
     ],
     HierarchicalTermNode: ["Category"],
-    MenuItemLinkable: ["Category", "Page", "Post", "PostFormat", "Tag"],
+    MenuItemLinkable: [
+      "Category",
+      "Cookie",
+      "Page",
+      "Post",
+      "PostFormat",
+      "Tag",
+    ],
     TermNode: ["Category", "PostFormat", "Tag"],
     Commenter: ["CommentAuthor", "User"],
     ContentRevisionUnion: ["Page", "Post"],
+    NodeWithContentEditor: ["Cookie", "Page", "Post"],
+    NodeWithFeaturedImage: ["Cookie", "Page", "Post"],
+    AcfFieldGroup: ["Cookie_Cookieinfo"],
     ContentTemplate: ["DefaultTemplate"],
     EnqueuedAsset: ["EnqueuedScript", "EnqueuedStylesheet"],
     HierarchicalContentNode: ["MediaItem", "Page"],
     NodeWithComments: ["MediaItem", "Page", "Post"],
-    MenuItemObjectUnion: ["Category", "Page", "Post", "PostFormat", "Tag"],
-    NodeWithContentEditor: ["Page", "Post"],
-    NodeWithFeaturedImage: ["Page", "Post"],
+    MenuItemObjectUnion: [
+      "Category",
+      "Cookie",
+      "Page",
+      "Post",
+      "PostFormat",
+      "Tag",
+    ],
     NodeWithPageAttributes: ["Page"],
     NodeWithRevisions: ["Page", "Post"],
     NodeWithExcerpt: ["Post"],
     NodeWithTrackbacks: ["Post"],
   },
 } as const;
+
+/**
+ * A Field Group registered by ACF
+ */
+export interface AcfFieldGroup {
+  __typename?: "Cookie_Cookieinfo";
+  /**
+   * The name of the ACF Field Group
+   */
+  fieldGroupName?: Maybe<ScalarsEnums["String"]>;
+  $on: $AcfFieldGroup;
+}
 
 /**
  * The atlasContentModelerSettings setting type
@@ -8057,6 +8363,9 @@ export interface Award {
   awardId: ScalarsEnums["Int"];
   awardName?: Maybe<ScalarsEnums["String"]>;
   communityName?: Maybe<Array<Maybe<ScalarsEnums["String"]>>>;
+  /**
+   * @deprecated Deprecated in favor of using Next.js pages
+   */
   conditionalTags?: Maybe<ConditionalTags>;
   /**
    * Connection between the ContentNode type and the ContentType type
@@ -8337,6 +8646,9 @@ export interface Category {
      */
     where?: Maybe<CategoryToCategoryConnectionWhereArgs>;
   }) => Maybe<CategoryToCategoryConnection>;
+  /**
+   * @deprecated Deprecated in favor of using Next.js pages
+   */
   conditionalTags?: Maybe<ConditionalTags>;
   /**
    * Connection between the category type and the ContentNode type
@@ -8911,90 +9223,112 @@ export interface ConditionalTags {
   __typename?: "ConditionalTags";
   /**
    * Determines whether the query is for an existing archive page.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isArchive?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether the query is for an existing attachment page.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isAttachment?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether the query is for an existing author archive page.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isAuthor?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether the query is for an existing category archive page.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isCategory?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether the query is for an existing date archive.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isDate?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether the query is for an existing day archive.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isDay?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether the query is for the front page of the site.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isFrontPage?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether the query is for the blog homepage.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isHome?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether the query is for an existing month archive.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isMonth?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether this site has more than one author.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isMultiAuthor?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether the query is for an existing single page.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isPage?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether currently in a page template.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isPageTemplate?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether the query is for an existing post type archive page.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isPostTypeArchive?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether the query is for a post or page preview.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isPreview?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether the query is for the Privacy Policy page.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isPrivacyPolicy?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether the query is for a search.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isSearch?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether the query is for an existing single post.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isSingle?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether the query is for an existing single post of any post type (post, attachment, page, custom post types).
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isSingular?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether a post is sticky.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isSticky?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether the query is for an existing tag archive page.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isTag?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether the query is for an existing custom taxonomy archive page.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isTax?: Maybe<ScalarsEnums["Boolean"]>;
   /**
    * Determines whether the query is for an existing year archive.
+   * @deprecated Deprecated in favor of using Next.js pages
    */
   isYear?: Maybe<ScalarsEnums["Boolean"]>;
 }
@@ -9003,7 +9337,10 @@ export interface ConditionalTags {
  * Nodes used to manage content
  */
 export interface ContentNode {
-  __typename?: "Award" | "MediaItem" | "Page" | "Post" | "Scout";
+  __typename?: "Award" | "Cookie" | "MediaItem" | "Page" | "Post" | "Scout";
+  /**
+   * @deprecated Deprecated in favor of using Next.js pages
+   */
   conditionalTags?: Maybe<ConditionalTags>;
   /**
    * Connection between the ContentNode type and the ContentType type
@@ -9281,6 +9618,9 @@ export interface ContentType {
    * Whether this content type should can be exported.
    */
   canExport?: Maybe<ScalarsEnums["Boolean"]>;
+  /**
+   * @deprecated Deprecated in favor of using Next.js pages
+   */
   conditionalTags?: Maybe<ConditionalTags>;
   /**
    * Connection between the ContentType type and the Taxonomy type
@@ -9516,6 +9856,227 @@ export interface ContentTypeToTaxonomyConnectionEdge {
 }
 
 /**
+ * The Cookie type
+ */
+export interface Cookie {
+  __typename?: "Cookie";
+  /**
+   * @deprecated Deprecated in favor of using Next.js pages
+   */
+  conditionalTags?: Maybe<ConditionalTags>;
+  /**
+   * The content of the post.
+   */
+  content: (args?: {
+    /**
+     * Format of the field output
+     */
+    format?: Maybe<PostObjectFieldFormatEnum>;
+  }) => Maybe<ScalarsEnums["String"]>;
+  /**
+   * Connection between the ContentNode type and the ContentType type
+   */
+  contentType?: Maybe<ContentNodeToContentTypeConnectionEdge>;
+  /**
+   * The name of the Content Type the node belongs to
+   */
+  contentTypeName: ScalarsEnums["String"];
+  /**
+   * The id field matches the WP_Post-&gt;ID field.
+   * @deprecated Deprecated in favor of the databaseId field
+   */
+  cookieId: ScalarsEnums["Int"];
+  /**
+   * Added to the GraphQL Schema because the ACF Field Group &quot;Cookie Info&quot; was set to Show in GraphQL.
+   */
+  cookieInfo?: Maybe<Cookie_Cookieinfo>;
+  /**
+   * The unique resource identifier path
+   */
+  databaseId: ScalarsEnums["Int"];
+  /**
+   * Post publishing date.
+   */
+  date?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The publishing date set in GMT.
+   */
+  dateGmt?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The desired slug of the post
+   */
+  desiredSlug?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * If a user has edited the node within the past 15 seconds, this will return the user that last edited. Null if the edit lock doesn&#039;t exist or is greater than 15 seconds
+   */
+  editingLockedBy?: Maybe<ContentNodeToEditLockConnectionEdge>;
+  /**
+   * The RSS enclosure for the object
+   */
+  enclosure?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * Connection between the ContentNode type and the EnqueuedScript type
+   */
+  enqueuedScripts: (args?: {
+    /**
+     * Cursor used along with the "first" argument to reference where in the dataset to get data
+     */
+    after?: Maybe<Scalars["String"]>;
+    /**
+     * Cursor used along with the "last" argument to reference where in the dataset to get data
+     */
+    before?: Maybe<Scalars["String"]>;
+    /**
+     * The number of items to return after the referenced "after" cursor
+     */
+    first?: Maybe<Scalars["Int"]>;
+    /**
+     * The number of items to return before the referenced "before" cursor
+     */
+    last?: Maybe<Scalars["Int"]>;
+  }) => Maybe<ContentNodeToEnqueuedScriptConnection>;
+  /**
+   * Connection between the ContentNode type and the EnqueuedStylesheet type
+   */
+  enqueuedStylesheets: (args?: {
+    /**
+     * Cursor used along with the "first" argument to reference where in the dataset to get data
+     */
+    after?: Maybe<Scalars["String"]>;
+    /**
+     * Cursor used along with the "last" argument to reference where in the dataset to get data
+     */
+    before?: Maybe<Scalars["String"]>;
+    /**
+     * The number of items to return after the referenced "after" cursor
+     */
+    first?: Maybe<Scalars["Int"]>;
+    /**
+     * The number of items to return before the referenced "before" cursor
+     */
+    last?: Maybe<Scalars["Int"]>;
+  }) => Maybe<ContentNodeToEnqueuedStylesheetConnection>;
+  /**
+   * Connection between the NodeWithFeaturedImage type and the MediaItem type
+   */
+  featuredImage?: Maybe<NodeWithFeaturedImageToMediaItemConnectionEdge>;
+  /**
+   * The database identifier for the featured image node assigned to the content node
+   */
+  featuredImageDatabaseId?: Maybe<ScalarsEnums["Int"]>;
+  /**
+   * Globally unique ID of the featured image assigned to the node
+   */
+  featuredImageId?: Maybe<ScalarsEnums["ID"]>;
+  /**
+   * The global unique identifier for this post. This currently matches the value stored in WP_Post-&gt;guid and the guid column in the &quot;post_objects&quot; database table.
+   */
+  guid?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The globally unique identifier of the cookie object.
+   */
+  id: ScalarsEnums["ID"];
+  /**
+   * Whether the node is a Content Node
+   */
+  isContentNode: ScalarsEnums["Boolean"];
+  /**
+   * Whether the object is a node in the preview state
+   */
+  isPreview?: Maybe<ScalarsEnums["Boolean"]>;
+  /**
+   * Whether the object is restricted from the current viewer
+   */
+  isRestricted?: Maybe<ScalarsEnums["Boolean"]>;
+  /**
+   * Whether the node is a Term
+   */
+  isTermNode: ScalarsEnums["Boolean"];
+  /**
+   * The user that most recently edited the node
+   */
+  lastEditedBy?: Maybe<ContentNodeToEditLastConnectionEdge>;
+  /**
+   * The permalink of the post
+   */
+  link?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The local modified time for a post. If a post was recently updated the modified field will change to match the corresponding time.
+   */
+  modified?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The GMT modified time for a post. If a post was recently updated the modified field will change to match the corresponding time in GMT.
+   */
+  modifiedGmt?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * Connection between the Cookie type and the Cookie type
+   */
+  preview?: Maybe<CookieToPreviewConnectionEdge>;
+  /**
+   * The database id of the preview node
+   */
+  previewRevisionDatabaseId?: Maybe<ScalarsEnums["Int"]>;
+  /**
+   * Whether the object is a node in the preview state
+   */
+  previewRevisionId?: Maybe<ScalarsEnums["ID"]>;
+  /**
+   * The uri slug for the post. This is equivalent to the WP_Post-&gt;post_name field and the post_name column in the database for the &quot;post_objects&quot; table.
+   */
+  slug?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The current status of the object
+   */
+  status?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The template assigned to a node of content
+   */
+  template?: Maybe<ContentTemplate>;
+  templates?: Maybe<Array<Maybe<ScalarsEnums["String"]>>>;
+  /**
+   * The title of the post. This is currently just the raw title. An amendment to support rendered title needs to be made.
+   */
+  title: (args?: {
+    /**
+     * Format of the field output
+     */
+    format?: Maybe<PostObjectFieldFormatEnum>;
+  }) => Maybe<ScalarsEnums["String"]>;
+  /**
+   * The unique resource identifier path
+   */
+  uri?: Maybe<ScalarsEnums["String"]>;
+}
+
+/**
+ * Connection between the Cookie type and the Cookie type
+ */
+export interface CookieToPreviewConnectionEdge {
+  __typename?: "CookieToPreviewConnectionEdge";
+  /**
+   * The node of the connection, without the edges
+   */
+  node?: Maybe<Cookie>;
+}
+
+/**
+ * Field Group
+ */
+export interface Cookie_Cookieinfo {
+  __typename?: "Cookie_Cookieinfo";
+  cookieImage?: Maybe<MediaItem>;
+  cookieName?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The name of the ACF Field Group
+   */
+  fieldGroupName?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * Does it have peanuts? Vegan or whatever
+   */
+  specialDiet?: Maybe<Array<Maybe<ScalarsEnums["String"]>>>;
+}
+
+/**
  * The payload for the createAward mutation
  */
 export interface CreateAwardPayload {
@@ -9562,6 +10123,21 @@ export interface CreateCommentPayload {
    * Whether the mutation succeeded. If the comment is not approved, the server will not return the comment to a non authenticated user, but a success message can be returned if the create succeeded, and the client can optimistically add the comment to the client cache
    */
   success?: Maybe<ScalarsEnums["Boolean"]>;
+}
+
+/**
+ * The payload for the createCookie mutation
+ */
+export interface CreateCookiePayload {
+  __typename?: "CreateCookiePayload";
+  /**
+   * If a &#039;clientMutationId&#039; input is provided to the mutation, it will be returned as output on the mutation. This ID can be used by the client to track the progress of mutations and catch possible duplicate mutation submissions.
+   */
+  clientMutationId?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The Post object mutation type.
+   */
+  cookie?: Maybe<Cookie>;
 }
 
 /**
@@ -9677,6 +10253,7 @@ export interface DatabaseIdentifier {
     | "Award"
     | "Category"
     | "Comment"
+    | "Cookie"
     | "MediaItem"
     | "Menu"
     | "MenuItem"
@@ -9757,6 +10334,25 @@ export interface DeleteCommentPayload {
   comment?: Maybe<Comment>;
   /**
    * The deleted comment ID
+   */
+  deletedId?: Maybe<ScalarsEnums["ID"]>;
+}
+
+/**
+ * The payload for the deleteCookie mutation
+ */
+export interface DeleteCookiePayload {
+  __typename?: "DeleteCookiePayload";
+  /**
+   * If a &#039;clientMutationId&#039; input is provided to the mutation, it will be returned as output on the mutation. This ID can be used by the client to track the progress of mutations and catch possible duplicate mutation submissions.
+   */
+  clientMutationId?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The object before it was deleted
+   */
+  cookie?: Maybe<Cookie>;
+  /**
+   * The ID of the deleted object
    */
   deletedId?: Maybe<ScalarsEnums["ID"]>;
 }
@@ -10401,6 +10997,9 @@ export interface MediaItem {
      */
     where?: Maybe<MediaItemToCommentConnectionWhereArgs>;
   }) => Maybe<MediaItemToCommentConnection>;
+  /**
+   * @deprecated Deprecated in favor of using Next.js pages
+   */
   conditionalTags?: Maybe<ConditionalTags>;
   /**
    * Connection between the ContentNode type and the ContentType type
@@ -10933,7 +11532,7 @@ export interface MenuItem {
  * Nodes that can be linked to as Menu Items
  */
 export interface MenuItemLinkable {
-  __typename?: "Category" | "Page" | "Post" | "PostFormat" | "Tag";
+  __typename?: "Category" | "Cookie" | "Page" | "Post" | "PostFormat" | "Tag";
   /**
    * The unique resource identifier path
    */
@@ -10953,7 +11552,7 @@ export interface MenuItemLinkable {
  * Deprecated in favor of MenuItemLinkeable Interface
  */
 export interface MenuItemObjectUnion {
-  __typename?: "Category" | "Page" | "Post" | "PostFormat" | "Tag";
+  __typename?: "Category" | "Cookie" | "Page" | "Post" | "PostFormat" | "Tag";
   $on: $MenuItemObjectUnion;
 }
 
@@ -11057,6 +11656,7 @@ export interface Node {
     | "Comment"
     | "CommentAuthor"
     | "ContentType"
+    | "Cookie"
     | "EnqueuedScript"
     | "EnqueuedStylesheet"
     | "MediaItem"
@@ -11130,7 +11730,7 @@ export interface NodeWithComments {
  * A node that supports the content editor
  */
 export interface NodeWithContentEditor {
-  __typename?: "Page" | "Post";
+  __typename?: "Cookie" | "Page" | "Post";
   /**
    * The content of the post.
    */
@@ -11164,7 +11764,10 @@ export interface NodeWithExcerpt {
  * A node that can have a featured image set
  */
 export interface NodeWithFeaturedImage {
-  __typename?: "Page" | "Post";
+  __typename?: "Cookie" | "Page" | "Post";
+  /**
+   * @deprecated Deprecated in favor of using Next.js pages
+   */
   conditionalTags?: Maybe<ConditionalTags>;
   /**
    * Connection between the ContentNode type and the ContentType type
@@ -11374,7 +11977,7 @@ export interface NodeWithRevisionsToContentNodeConnectionEdge {
  * A node that can have a template associated with it
  */
 export interface NodeWithTemplate {
-  __typename?: "Award" | "MediaItem" | "Page" | "Post" | "Scout";
+  __typename?: "Award" | "Cookie" | "MediaItem" | "Page" | "Post" | "Scout";
   /**
    * The template assigned to the node
    */
@@ -11386,7 +11989,7 @@ export interface NodeWithTemplate {
  * A node that NodeWith a title
  */
 export interface NodeWithTitle {
-  __typename?: "Award" | "MediaItem" | "Page" | "Post" | "Scout";
+  __typename?: "Award" | "Cookie" | "MediaItem" | "Page" | "Post" | "Scout";
   /**
    * The title of the post. This is currently just the raw title. An amendment to support rendered title needs to be made.
    */
@@ -11519,6 +12122,9 @@ export interface Page {
      */
     where?: Maybe<PageToCommentConnectionWhereArgs>;
   }) => Maybe<PageToCommentConnection>;
+  /**
+   * @deprecated Deprecated in favor of using Next.js pages
+   */
   conditionalTags?: Maybe<ConditionalTags>;
   /**
    * The content of the post.
@@ -11958,6 +12564,9 @@ export interface Post {
      */
     where?: Maybe<PostToCommentConnectionWhereArgs>;
   }) => Maybe<PostToCommentConnection>;
+  /**
+   * @deprecated Deprecated in favor of using Next.js pages
+   */
   conditionalTags?: Maybe<ConditionalTags>;
   /**
    * The content of the post.
@@ -12277,6 +12886,9 @@ export interface Post {
  */
 export interface PostFormat {
   __typename?: "PostFormat";
+  /**
+   * @deprecated Deprecated in favor of using Next.js pages
+   */
   conditionalTags?: Maybe<ConditionalTags>;
   /**
    * Connection between the postFormat type and the ContentNode type
@@ -13104,6 +13716,40 @@ export interface RootQueryToContentTypeConnectionEdge {
 }
 
 /**
+ * Connection between the RootQuery type and the Cookie type
+ */
+export interface RootQueryToCookieConnection {
+  __typename?: "RootQueryToCookieConnection";
+  /**
+   * Edges for the RootQueryToCookieConnection connection
+   */
+  edges?: Maybe<Array<Maybe<RootQueryToCookieConnectionEdge>>>;
+  /**
+   * The nodes of the connection, without the edges
+   */
+  nodes?: Maybe<Array<Maybe<Cookie>>>;
+  /**
+   * Information about pagination in a connection.
+   */
+  pageInfo?: Maybe<WPPageInfo>;
+}
+
+/**
+ * An edge in a connection
+ */
+export interface RootQueryToCookieConnectionEdge {
+  __typename?: "RootQueryToCookieConnectionEdge";
+  /**
+   * A cursor for use in pagination
+   */
+  cursor?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The item at the end of the edge
+   */
+  node?: Maybe<Cookie>;
+}
+
+/**
  * Connection between the RootQuery type and the EnqueuedScript type
  */
 export interface RootQueryToEnqueuedScriptConnection {
@@ -13665,6 +14311,9 @@ export interface Scout {
    * The globally unique identifier of the author of the node
    */
   authorId?: Maybe<ScalarsEnums["ID"]>;
+  /**
+   * @deprecated Deprecated in favor of using Next.js pages
+   */
   conditionalTags?: Maybe<ConditionalTags>;
   /**
    * Connection between the ContentNode type and the ContentType type
@@ -13950,6 +14599,9 @@ export interface Settings {
  */
 export interface Tag {
   __typename?: "Tag";
+  /**
+   * @deprecated Deprecated in favor of using Next.js pages
+   */
   conditionalTags?: Maybe<ConditionalTags>;
   /**
    * Connection between the tag type and the ContentNode type
@@ -14333,6 +14985,9 @@ export interface TaxonomyToContentTypeConnectionEdge {
  */
 export interface TermNode {
   __typename?: "Category" | "PostFormat" | "Tag";
+  /**
+   * @deprecated Deprecated in favor of using Next.js pages
+   */
   conditionalTags?: Maybe<ConditionalTags>;
   /**
    * The number of objects connected to the object
@@ -14563,6 +15218,7 @@ export interface UniformResourceIdentifiable {
     | "Award"
     | "Category"
     | "ContentType"
+    | "Cookie"
     | "MediaItem"
     | "Page"
     | "Post"
@@ -14570,6 +15226,9 @@ export interface UniformResourceIdentifiable {
     | "Scout"
     | "Tag"
     | "User";
+  /**
+   * @deprecated Deprecated in favor of using Next.js pages
+   */
   conditionalTags?: Maybe<ConditionalTags>;
   /**
    * The unique resource identifier path
@@ -14638,6 +15297,21 @@ export interface UpdateCommentPayload {
    * Whether the mutation succeeded. If the comment is not approved, the server will not return the comment to a non authenticated user, but a success message can be returned if the create succeeded, and the client can optimistically add the comment to the client cache
    */
   success?: Maybe<ScalarsEnums["Boolean"]>;
+}
+
+/**
+ * The payload for the updateCookie mutation
+ */
+export interface UpdateCookiePayload {
+  __typename?: "UpdateCookiePayload";
+  /**
+   * If a &#039;clientMutationId&#039; input is provided to the mutation, it will be returned as output on the mutation. This ID can be used by the client to track the progress of mutations and catch possible duplicate mutation submissions.
+   */
+  clientMutationId?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The Post object mutation type.
+   */
+  cookie?: Maybe<Cookie>;
 }
 
 /**
@@ -14865,6 +15539,9 @@ export interface User {
      */
     where?: Maybe<UserToCommentConnectionWhereArgs>;
   }) => Maybe<UserToCommentConnection>;
+  /**
+   * @deprecated Deprecated in favor of using Next.js pages
+   */
   conditionalTags?: Maybe<ConditionalTags>;
   /**
    * Identifies the primary key from the database.
@@ -15556,6 +16233,9 @@ export interface Mutation {
   createComment: (args: {
     input: CreateCommentInput;
   }) => Maybe<CreateCommentPayload>;
+  createCookie: (args: {
+    input: CreateCookieInput;
+  }) => Maybe<CreateCookiePayload>;
   createMediaItem: (args: {
     input: CreateMediaItemInput;
   }) => Maybe<CreateMediaItemPayload>;
@@ -15574,6 +16254,9 @@ export interface Mutation {
   deleteComment: (args: {
     input: DeleteCommentInput;
   }) => Maybe<DeleteCommentPayload>;
+  deleteCookie: (args: {
+    input: DeleteCookieInput;
+  }) => Maybe<DeleteCookiePayload>;
   deleteMediaItem: (args: {
     input: DeleteMediaItemInput;
   }) => Maybe<DeleteMediaItemPayload>;
@@ -15610,6 +16293,9 @@ export interface Mutation {
   updateComment: (args: {
     input: UpdateCommentInput;
   }) => Maybe<UpdateCommentPayload>;
+  updateCookie: (args: {
+    input: UpdateCookieInput;
+  }) => Maybe<UpdateCookiePayload>;
   updateMediaItem: (args: {
     input: UpdateMediaItemInput;
   }) => Maybe<UpdateMediaItemPayload>;
@@ -15690,6 +16376,24 @@ export interface Query {
     first?: Maybe<Scalars["Int"]>;
     last?: Maybe<Scalars["Int"]>;
   }) => Maybe<RootQueryToContentTypeConnection>;
+  cookie: (args: {
+    asPreview?: Maybe<Scalars["Boolean"]>;
+    id: Scalars["ID"];
+    idType?: Maybe<CookieIdType>;
+  }) => Maybe<Cookie>;
+  cookieBy: (args?: {
+    cookieId?: Maybe<Scalars["Int"]>;
+    id?: Maybe<Scalars["ID"]>;
+    slug?: Maybe<Scalars["String"]>;
+    uri?: Maybe<Scalars["String"]>;
+  }) => Maybe<Cookie>;
+  cookies: (args?: {
+    after?: Maybe<Scalars["String"]>;
+    before?: Maybe<Scalars["String"]>;
+    first?: Maybe<Scalars["Int"]>;
+    last?: Maybe<Scalars["Int"]>;
+    where?: Maybe<RootQueryToCookieConnectionWhereArgs>;
+  }) => Maybe<RootQueryToCookieConnection>;
   discussionSettings?: Maybe<DiscussionSettings>;
   generalSettings?: Maybe<GeneralSettings>;
   genesisBlocksGlobalSettingsSettings?: Maybe<GenesisBlocksGlobalSettingsSettings>;
@@ -15929,9 +16633,13 @@ export interface SchemaObjectTypes {
   ContentTypeToContentNodeConnectionEdge: ContentTypeToContentNodeConnectionEdge;
   ContentTypeToTaxonomyConnection: ContentTypeToTaxonomyConnection;
   ContentTypeToTaxonomyConnectionEdge: ContentTypeToTaxonomyConnectionEdge;
+  Cookie: Cookie;
+  CookieToPreviewConnectionEdge: CookieToPreviewConnectionEdge;
+  Cookie_Cookieinfo: Cookie_Cookieinfo;
   CreateAwardPayload: CreateAwardPayload;
   CreateCategoryPayload: CreateCategoryPayload;
   CreateCommentPayload: CreateCommentPayload;
+  CreateCookiePayload: CreateCookiePayload;
   CreateMediaItemPayload: CreateMediaItemPayload;
   CreatePagePayload: CreatePagePayload;
   CreatePostFormatPayload: CreatePostFormatPayload;
@@ -15943,6 +16651,7 @@ export interface SchemaObjectTypes {
   DeleteAwardPayload: DeleteAwardPayload;
   DeleteCategoryPayload: DeleteCategoryPayload;
   DeleteCommentPayload: DeleteCommentPayload;
+  DeleteCookiePayload: DeleteCookiePayload;
   DeleteMediaItemPayload: DeleteMediaItemPayload;
   DeletePagePayload: DeletePagePayload;
   DeletePostFormatPayload: DeletePostFormatPayload;
@@ -16024,6 +16733,8 @@ export interface SchemaObjectTypes {
   RootQueryToContentRevisionUnionConnectionEdge: RootQueryToContentRevisionUnionConnectionEdge;
   RootQueryToContentTypeConnection: RootQueryToContentTypeConnection;
   RootQueryToContentTypeConnectionEdge: RootQueryToContentTypeConnectionEdge;
+  RootQueryToCookieConnection: RootQueryToCookieConnection;
+  RootQueryToCookieConnectionEdge: RootQueryToCookieConnectionEdge;
   RootQueryToEnqueuedScriptConnection: RootQueryToEnqueuedScriptConnection;
   RootQueryToEnqueuedScriptConnectionEdge: RootQueryToEnqueuedScriptConnectionEdge;
   RootQueryToEnqueuedStylesheetConnection: RootQueryToEnqueuedStylesheetConnection;
@@ -16078,6 +16789,7 @@ export interface SchemaObjectTypes {
   UpdateAwardPayload: UpdateAwardPayload;
   UpdateCategoryPayload: UpdateCategoryPayload;
   UpdateCommentPayload: UpdateCommentPayload;
+  UpdateCookiePayload: UpdateCookiePayload;
   UpdateMediaItemPayload: UpdateMediaItemPayload;
   UpdatePagePayload: UpdatePagePayload;
   UpdatePostFormatPayload: UpdatePostFormatPayload;
@@ -16149,9 +16861,13 @@ export type SchemaObjectTypesNames =
   | "ContentTypeToContentNodeConnectionEdge"
   | "ContentTypeToTaxonomyConnection"
   | "ContentTypeToTaxonomyConnectionEdge"
+  | "Cookie"
+  | "CookieToPreviewConnectionEdge"
+  | "Cookie_Cookieinfo"
   | "CreateAwardPayload"
   | "CreateCategoryPayload"
   | "CreateCommentPayload"
+  | "CreateCookiePayload"
   | "CreateMediaItemPayload"
   | "CreatePagePayload"
   | "CreatePostFormatPayload"
@@ -16163,6 +16879,7 @@ export type SchemaObjectTypesNames =
   | "DeleteAwardPayload"
   | "DeleteCategoryPayload"
   | "DeleteCommentPayload"
+  | "DeleteCookiePayload"
   | "DeleteMediaItemPayload"
   | "DeletePagePayload"
   | "DeletePostFormatPayload"
@@ -16244,6 +16961,8 @@ export type SchemaObjectTypesNames =
   | "RootQueryToContentRevisionUnionConnectionEdge"
   | "RootQueryToContentTypeConnection"
   | "RootQueryToContentTypeConnectionEdge"
+  | "RootQueryToCookieConnection"
+  | "RootQueryToCookieConnectionEdge"
   | "RootQueryToEnqueuedScriptConnection"
   | "RootQueryToEnqueuedScriptConnectionEdge"
   | "RootQueryToEnqueuedStylesheetConnection"
@@ -16298,6 +17017,7 @@ export type SchemaObjectTypesNames =
   | "UpdateAwardPayload"
   | "UpdateCategoryPayload"
   | "UpdateCommentPayload"
+  | "UpdateCookiePayload"
   | "UpdateMediaItemPayload"
   | "UpdatePagePayload"
   | "UpdatePostFormatPayload"
@@ -16331,6 +17051,10 @@ export type SchemaObjectTypesNames =
   | "WPPageInfo"
   | "WritingSettings";
 
+export interface $AcfFieldGroup {
+  Cookie_Cookieinfo?: Cookie_Cookieinfo;
+}
+
 export interface $Commenter {
   CommentAuthor?: CommentAuthor;
   User?: User;
@@ -16338,6 +17062,7 @@ export interface $Commenter {
 
 export interface $ContentNode {
   Award?: Award;
+  Cookie?: Cookie;
   MediaItem?: MediaItem;
   Page?: Page;
   Post?: Post;
@@ -16357,6 +17082,7 @@ export interface $DatabaseIdentifier {
   Award?: Award;
   Category?: Category;
   Comment?: Comment;
+  Cookie?: Cookie;
   MediaItem?: MediaItem;
   Menu?: Menu;
   MenuItem?: MenuItem;
@@ -16384,6 +17110,7 @@ export interface $HierarchicalTermNode {
 
 export interface $MenuItemLinkable {
   Category?: Category;
+  Cookie?: Cookie;
   Page?: Page;
   Post?: Post;
   PostFormat?: PostFormat;
@@ -16392,6 +17119,7 @@ export interface $MenuItemLinkable {
 
 export interface $MenuItemObjectUnion {
   Category?: Category;
+  Cookie?: Cookie;
   Page?: Page;
   Post?: Post;
   PostFormat?: PostFormat;
@@ -16404,6 +17132,7 @@ export interface $Node {
   Comment?: Comment;
   CommentAuthor?: CommentAuthor;
   ContentType?: ContentType;
+  Cookie?: Cookie;
   EnqueuedScript?: EnqueuedScript;
   EnqueuedStylesheet?: EnqueuedStylesheet;
   MediaItem?: MediaItem;
@@ -16436,6 +17165,7 @@ export interface $NodeWithComments {
 }
 
 export interface $NodeWithContentEditor {
+  Cookie?: Cookie;
   Page?: Page;
   Post?: Post;
 }
@@ -16445,6 +17175,7 @@ export interface $NodeWithExcerpt {
 }
 
 export interface $NodeWithFeaturedImage {
+  Cookie?: Cookie;
   Page?: Page;
   Post?: Post;
 }
@@ -16460,6 +17191,7 @@ export interface $NodeWithRevisions {
 
 export interface $NodeWithTemplate {
   Award?: Award;
+  Cookie?: Cookie;
   MediaItem?: MediaItem;
   Page?: Page;
   Post?: Post;
@@ -16468,6 +17200,7 @@ export interface $NodeWithTemplate {
 
 export interface $NodeWithTitle {
   Award?: Award;
+  Cookie?: Cookie;
   MediaItem?: MediaItem;
   Page?: Page;
   Post?: Post;
@@ -16488,6 +17221,7 @@ export interface $UniformResourceIdentifiable {
   Award?: Award;
   Category?: Category;
   ContentType?: ContentType;
+  Cookie?: Cookie;
   MediaItem?: MediaItem;
   Page?: Page;
   Post?: Post;
@@ -16518,6 +17252,7 @@ export interface ScalarsEnums extends MakeNullable<Scalars> {
   ContentTypesOfCategoryEnum: ContentTypesOfCategoryEnum | undefined;
   ContentTypesOfPostFormatEnum: ContentTypesOfPostFormatEnum | undefined;
   ContentTypesOfTagEnum: ContentTypesOfTagEnum | undefined;
+  CookieIdType: CookieIdType | undefined;
   MediaItemIdType: MediaItemIdType | undefined;
   MediaItemSizeEnum: MediaItemSizeEnum | undefined;
   MediaItemStatusEnum: MediaItemStatusEnum | undefined;
