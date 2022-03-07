@@ -20,7 +20,7 @@ function Cookie({
         {/* TODO - map this */}
         <pre>{JSON.stringify(cookieInfo.specialDiet, null, 2)}</pre>
         <p>Check out this {cookieInfo.cookieName}! </p>
-        <img src={cookieImage.mediaItemUrl}></img>
+        {cookieImage? <img src={cookieImage.mediaItemUrl}></img> : ''}
         
       </div>
     </section>

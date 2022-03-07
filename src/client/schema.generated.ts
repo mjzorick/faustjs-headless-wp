@@ -22,6 +22,8 @@ export interface Scalars {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** JSON field */
+  JSON: any;
 }
 
 /** What rating to display avatars up to. Accepts 'G', 'PG', 'R', 'X', and are judged in that order. Default is the value of the 'avatar_rating' option */
@@ -3715,6 +3717,7 @@ export const scalarsEnumsHash: import("gqty").ScalarsEnumsHash = {
   Float: true,
   ID: true,
   Int: true,
+  JSON: true,
   MediaItemIdType: true,
   MediaItemSizeEnum: true,
   MediaItemStatusEnum: true,
@@ -6764,6 +6767,10 @@ export const generatedSchema = {
     __typename: { __type: "String!" },
     node: { __type: "Scout" },
   },
+  SearchResult: {
+    __typename: { __type: "String!" },
+    result: { __type: "JSON" },
+  },
   SendPasswordResetEmailInput: {
     clientMutationId: { __type: "String" },
     username: { __type: "String!" },
@@ -7916,6 +7923,10 @@ export const generatedSchema = {
         last: "Int",
         where: "RootQueryToCommentConnectionWhereArgs",
       },
+    },
+    contentEngineSearch: {
+      __type: "SearchResult",
+      __args: { limit: "Int", offset: "Int", q: "String" },
     },
     contentNode: {
       __type: "ContentNode",
@@ -14495,6 +14506,17 @@ export interface ScoutToPreviewConnectionEdge {
 }
 
 /**
+ * Describe what a CustomType is
+ */
+export interface SearchResult {
+  __typename?: "SearchResult";
+  /**
+   * Describe what testField should be used for
+   */
+  result?: Maybe<ScalarsEnums["JSON"]>;
+}
+
+/**
  * The payload for the sendPasswordResetEmail mutation
  */
 export interface SendPasswordResetEmailPayload {
@@ -16353,6 +16375,11 @@ export interface Query {
     last?: Maybe<Scalars["Int"]>;
     where?: Maybe<RootQueryToCommentConnectionWhereArgs>;
   }) => Maybe<RootQueryToCommentConnection>;
+  contentEngineSearch: (args?: {
+    limit?: Maybe<Scalars["Int"]>;
+    offset?: Maybe<Scalars["Int"]>;
+    q?: Maybe<Scalars["String"]>;
+  }) => Maybe<SearchResult>;
   contentNode: (args: {
     asPreview?: Maybe<Scalars["Boolean"]>;
     contentType?: Maybe<ContentTypeEnum>;
@@ -16769,6 +16796,7 @@ export interface SchemaObjectTypes {
   RootQueryToUserRoleConnectionEdge: RootQueryToUserRoleConnectionEdge;
   Scout: Scout;
   ScoutToPreviewConnectionEdge: ScoutToPreviewConnectionEdge;
+  SearchResult: SearchResult;
   SendPasswordResetEmailPayload: SendPasswordResetEmailPayload;
   Settings: Settings;
   Subscription: Subscription;
@@ -16997,6 +17025,7 @@ export type SchemaObjectTypesNames =
   | "RootQueryToUserRoleConnectionEdge"
   | "Scout"
   | "ScoutToPreviewConnectionEdge"
+  | "SearchResult"
   | "SendPasswordResetEmailPayload"
   | "Settings"
   | "Subscription"
