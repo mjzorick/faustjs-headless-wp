@@ -26,6 +26,18 @@ export interface Scalars {
   JSON: any;
 }
 
+/** The Type of Identifier used to fetch a single resource. Default is ID. */
+export enum ActivityIdType {
+  /** Identify a resource by the Database ID. */
+  DATABASE_ID = "DATABASE_ID",
+  /** Identify a resource by the (hashed) Global ID. */
+  ID = "ID",
+  /** Identify a resource by the slug. Available to non-hierarchcial Types where the slug is a unique identifier. */
+  SLUG = "SLUG",
+  /** Identify a resource by the URI. */
+  URI = "URI",
+}
+
 /** What rating to display avatars up to. Accepts 'G', 'PG', 'R', 'X', and are judged in that order. Default is the value of the 'avatar_rating' option */
 export enum AvatarRatingEnum {
   /** Indicates a G level avatar rating level. */
@@ -387,6 +399,8 @@ export enum ContentNodeIdTypeEnum {
 /** Allowed Content Types */
 export enum ContentTypeEnum {
   /** The Type of Content object */
+  ACTIVITY = "ACTIVITY",
+  /** The Type of Content object */
   ATTACHMENT = "ATTACHMENT",
   /** The Type of Content object */
   AWARD = "AWARD",
@@ -476,6 +490,26 @@ export enum CookieIdType {
   SLUG = "SLUG",
   /** Identify a resource by the URI. */
   URI = "URI",
+}
+
+/** Input for the createActivity mutation */
+export interface CreateActivityInput {
+  /** The userId to assign as the author of the object */
+  authorId?: InputMaybe<Scalars["ID"]>;
+  /** This is an ID that can be passed to a mutation by the client to track the progress of mutations and catch possible duplicate mutation submissions. */
+  clientMutationId?: InputMaybe<Scalars["String"]>;
+  /** The date of the object. Preferable to enter as year/month/day (e.g. 01/31/2017) as it will rearrange date as fit if it is not specified. Incomplete dates may have unintended results for example, "2017" as the input will use current date with timestamp 20:17  */
+  date?: InputMaybe<Scalars["String"]>;
+  /** A field used for ordering posts. This is typically used with nav menu items or for special ordering of hierarchical content types. */
+  menuOrder?: InputMaybe<Scalars["Int"]>;
+  /** The password used to protect the content of the object */
+  password?: InputMaybe<Scalars["String"]>;
+  /** The slug of the object */
+  slug?: InputMaybe<Scalars["String"]>;
+  /** The status of the object */
+  status?: InputMaybe<PostStatusEnum>;
+  /** The title of the object */
+  title?: InputMaybe<Scalars["String"]>;
 }
 
 /** Input for the createAward mutation */
@@ -782,6 +816,16 @@ export interface DateQueryInput {
   week?: InputMaybe<Scalars["Int"]>;
   /** 4 digit year (e.g. 2017) */
   year?: InputMaybe<Scalars["Int"]>;
+}
+
+/** Input for the deleteActivity mutation */
+export interface DeleteActivityInput {
+  /** This is an ID that can be passed to a mutation by the client to track the progress of mutations and catch possible duplicate mutation submissions. */
+  clientMutationId?: InputMaybe<Scalars["String"]>;
+  /** Whether the object should be force deleted instead of being moved to the trash */
+  forceDelete?: InputMaybe<Scalars["Boolean"]>;
+  /** The ID of the activity to delete */
+  id: Scalars["ID"];
 }
 
 /** Input for the deleteAward mutation */
@@ -2090,6 +2134,52 @@ export interface RestoreCommentInput {
   id: Scalars["ID"];
 }
 
+/** Arguments for filtering the RootQueryToActivityConnection connection */
+export interface RootQueryToActivityConnectionWhereArgs {
+  /** The user that's connected as the author of the object. Use the userId for the author object. */
+  author?: InputMaybe<Scalars["Int"]>;
+  /** Find objects connected to author(s) in the array of author's userIds */
+  authorIn?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
+  /** Find objects connected to the author by the author's nicename */
+  authorName?: InputMaybe<Scalars["String"]>;
+  /** Find objects NOT connected to author(s) in the array of author's userIds */
+  authorNotIn?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
+  /** Filter the connection based on dates */
+  dateQuery?: InputMaybe<DateQueryInput>;
+  /** True for objects with passwords; False for objects without passwords; null for all objects with or without passwords */
+  hasPassword?: InputMaybe<Scalars["Boolean"]>;
+  /** Specific ID of the object */
+  id?: InputMaybe<Scalars["Int"]>;
+  /** Array of IDs for the objects to retrieve */
+  in?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
+  /** Get objects with a specific mimeType property */
+  mimeType?: InputMaybe<MimeTypeEnum>;
+  /** Slug / post_name of the object */
+  name?: InputMaybe<Scalars["String"]>;
+  /** Specify objects to retrieve. Use slugs */
+  nameIn?: InputMaybe<Array<InputMaybe<Scalars["String"]>>>;
+  /** Specify IDs NOT to retrieve. If this is used in the same query as "in", it will be ignored */
+  notIn?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
+  /** What paramater to use to order the objects by. */
+  orderby?: InputMaybe<Array<InputMaybe<PostObjectsConnectionOrderbyInput>>>;
+  /** Use ID to return only children. Use 0 to return only top-level items */
+  parent?: InputMaybe<Scalars["ID"]>;
+  /** Specify objects whose parent is in an array */
+  parentIn?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
+  /** Specify posts whose parent is not in an array */
+  parentNotIn?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
+  /** Show posts with a specific password. */
+  password?: InputMaybe<Scalars["String"]>;
+  /** Show Posts based on a keyword search */
+  search?: InputMaybe<Scalars["String"]>;
+  /** Retrieve posts where post status is in an array. */
+  stati?: InputMaybe<Array<InputMaybe<PostStatusEnum>>>;
+  /** Show posts with a specific status. */
+  status?: InputMaybe<PostStatusEnum>;
+  /** Title of the object */
+  title?: InputMaybe<Scalars["String"]>;
+}
+
 /** Arguments for filtering the RootQueryToAwardConnection connection */
 export interface RootQueryToAwardConnectionWhereArgs {
   /** The user that's connected as the author of the object. Use the userId for the author object. */
@@ -2946,6 +3036,28 @@ export enum TermObjectsConnectionOrderbyEnum {
   TERM_ORDER = "TERM_ORDER",
 }
 
+/** Input for the updateActivity mutation */
+export interface UpdateActivityInput {
+  /** The userId to assign as the author of the object */
+  authorId?: InputMaybe<Scalars["ID"]>;
+  /** This is an ID that can be passed to a mutation by the client to track the progress of mutations and catch possible duplicate mutation submissions. */
+  clientMutationId?: InputMaybe<Scalars["String"]>;
+  /** The date of the object. Preferable to enter as year/month/day (e.g. 01/31/2017) as it will rearrange date as fit if it is not specified. Incomplete dates may have unintended results for example, "2017" as the input will use current date with timestamp 20:17  */
+  date?: InputMaybe<Scalars["String"]>;
+  /** The ID of the activity object */
+  id: Scalars["ID"];
+  /** A field used for ordering posts. This is typically used with nav menu items or for special ordering of hierarchical content types. */
+  menuOrder?: InputMaybe<Scalars["Int"]>;
+  /** The password used to protect the content of the object */
+  password?: InputMaybe<Scalars["String"]>;
+  /** The slug of the object */
+  slug?: InputMaybe<Scalars["String"]>;
+  /** The status of the object */
+  status?: InputMaybe<PostStatusEnum>;
+  /** The title of the object */
+  title?: InputMaybe<Scalars["String"]>;
+}
+
 /** Input for the updateAward mutation */
 export interface UpdateAwardInput {
   /** The userId to assign as the author of the object */
@@ -3305,6 +3417,52 @@ export enum UserRoleEnum {
   EDITOR = "EDITOR",
   /** User role with specific capabilities */
   SUBSCRIBER = "SUBSCRIBER",
+}
+
+/** Arguments for filtering the UserToActivityConnection connection */
+export interface UserToActivityConnectionWhereArgs {
+  /** The user that's connected as the author of the object. Use the userId for the author object. */
+  author?: InputMaybe<Scalars["Int"]>;
+  /** Find objects connected to author(s) in the array of author's userIds */
+  authorIn?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
+  /** Find objects connected to the author by the author's nicename */
+  authorName?: InputMaybe<Scalars["String"]>;
+  /** Find objects NOT connected to author(s) in the array of author's userIds */
+  authorNotIn?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
+  /** Filter the connection based on dates */
+  dateQuery?: InputMaybe<DateQueryInput>;
+  /** True for objects with passwords; False for objects without passwords; null for all objects with or without passwords */
+  hasPassword?: InputMaybe<Scalars["Boolean"]>;
+  /** Specific ID of the object */
+  id?: InputMaybe<Scalars["Int"]>;
+  /** Array of IDs for the objects to retrieve */
+  in?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
+  /** Get objects with a specific mimeType property */
+  mimeType?: InputMaybe<MimeTypeEnum>;
+  /** Slug / post_name of the object */
+  name?: InputMaybe<Scalars["String"]>;
+  /** Specify objects to retrieve. Use slugs */
+  nameIn?: InputMaybe<Array<InputMaybe<Scalars["String"]>>>;
+  /** Specify IDs NOT to retrieve. If this is used in the same query as "in", it will be ignored */
+  notIn?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
+  /** What paramater to use to order the objects by. */
+  orderby?: InputMaybe<Array<InputMaybe<PostObjectsConnectionOrderbyInput>>>;
+  /** Use ID to return only children. Use 0 to return only top-level items */
+  parent?: InputMaybe<Scalars["ID"]>;
+  /** Specify objects whose parent is in an array */
+  parentIn?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
+  /** Specify posts whose parent is not in an array */
+  parentNotIn?: InputMaybe<Array<InputMaybe<Scalars["ID"]>>>;
+  /** Show posts with a specific password. */
+  password?: InputMaybe<Scalars["String"]>;
+  /** Show Posts based on a keyword search */
+  search?: InputMaybe<Scalars["String"]>;
+  /** Retrieve posts where post status is in an array. */
+  stati?: InputMaybe<Array<InputMaybe<PostStatusEnum>>>;
+  /** Show posts with a specific status. */
+  status?: InputMaybe<PostStatusEnum>;
+  /** Title of the object */
+  title?: InputMaybe<Scalars["String"]>;
 }
 
 /** Arguments for filtering the UserToAwardConnection connection */
@@ -3702,6 +3860,7 @@ export enum UsersConnectionSearchColumnEnum {
 }
 
 export const scalarsEnumsHash: import("gqty").ScalarsEnumsHash = {
+  ActivityIdType: true,
   AvatarRatingEnum: true,
   AwardIdType: true,
   Boolean: true,
@@ -3751,6 +3910,59 @@ export const generatedSchema = {
     __typename: { __type: "String!" },
     fieldGroupName: { __type: "String" },
     $on: { __type: "$AcfFieldGroup!" },
+  },
+  Activity: {
+    __typename: { __type: "String!" },
+    activityId: { __type: "Int!" },
+    activityLocation: { __type: "String" },
+    activityName: { __type: "String" },
+    author: { __type: "NodeWithAuthorToUserConnectionEdge" },
+    authorDatabaseId: { __type: "Int" },
+    authorId: { __type: "ID" },
+    conditionalTags: { __type: "ConditionalTags" },
+    contentType: { __type: "ContentNodeToContentTypeConnectionEdge" },
+    contentTypeName: { __type: "String!" },
+    databaseId: { __type: "Int!" },
+    date: { __type: "String" },
+    dateGmt: { __type: "String" },
+    dateOfActivity: { __type: "String" },
+    desiredSlug: { __type: "String" },
+    editingLockedBy: { __type: "ContentNodeToEditLockConnectionEdge" },
+    enclosure: { __type: "String" },
+    enqueuedScripts: {
+      __type: "ContentNodeToEnqueuedScriptConnection",
+      __args: { after: "String", before: "String", first: "Int", last: "Int" },
+    },
+    enqueuedStylesheets: {
+      __type: "ContentNodeToEnqueuedStylesheetConnection",
+      __args: { after: "String", before: "String", first: "Int", last: "Int" },
+    },
+    guid: { __type: "String" },
+    id: { __type: "ID!" },
+    isContentNode: { __type: "Boolean!" },
+    isPreview: { __type: "Boolean" },
+    isRestricted: { __type: "Boolean" },
+    isTermNode: { __type: "Boolean!" },
+    lastEditedBy: { __type: "ContentNodeToEditLastConnectionEdge" },
+    link: { __type: "String" },
+    modified: { __type: "String" },
+    modifiedGmt: { __type: "String" },
+    preview: { __type: "ActivityToPreviewConnectionEdge" },
+    previewRevisionDatabaseId: { __type: "Int" },
+    previewRevisionId: { __type: "ID" },
+    slug: { __type: "String" },
+    status: { __type: "String" },
+    template: { __type: "ContentTemplate" },
+    templates: { __type: "[String]" },
+    title: {
+      __type: "String",
+      __args: { format: "PostObjectFieldFormatEnum" },
+    },
+    uri: { __type: "String" },
+  },
+  ActivityToPreviewConnectionEdge: {
+    __typename: { __type: "String!" },
+    node: { __type: "Activity" },
   },
   AtlasContentModelerSettingsSettings: {
     __typename: { __type: "String!" },
@@ -4071,6 +4283,14 @@ export const generatedSchema = {
   },
   CommentAuthor: {
     __typename: { __type: "String!" },
+    avatar: {
+      __type: "Avatar",
+      __args: {
+        forceDefault: "Boolean",
+        rating: "AvatarRatingEnum",
+        size: "Int",
+      },
+    },
     databaseId: { __type: "Int!" },
     email: { __type: "String" },
     id: { __type: "ID!" },
@@ -4165,6 +4385,7 @@ export const generatedSchema = {
   },
   Commenter: {
     __typename: { __type: "String!" },
+    avatar: { __type: "Avatar" },
     databaseId: { __type: "Int!" },
     email: { __type: "String" },
     id: { __type: "ID!" },
@@ -4433,6 +4654,21 @@ export const generatedSchema = {
     fieldGroupName: { __type: "String" },
     specialDiet: { __type: "[String]" },
   },
+  CreateActivityInput: {
+    authorId: { __type: "ID" },
+    clientMutationId: { __type: "String" },
+    date: { __type: "String" },
+    menuOrder: { __type: "Int" },
+    password: { __type: "String" },
+    slug: { __type: "String" },
+    status: { __type: "PostStatusEnum" },
+    title: { __type: "String" },
+  },
+  CreateActivityPayload: {
+    __typename: { __type: "String!" },
+    activity: { __type: "Activity" },
+    clientMutationId: { __type: "String" },
+  },
   CreateAwardInput: {
     authorId: { __type: "ID" },
     clientMutationId: { __type: "String" },
@@ -4650,6 +4886,17 @@ export const generatedSchema = {
   DefaultTemplate: {
     __typename: { __type: "String!" },
     templateName: { __type: "String" },
+  },
+  DeleteActivityInput: {
+    clientMutationId: { __type: "String" },
+    forceDelete: { __type: "Boolean" },
+    id: { __type: "ID!" },
+  },
+  DeleteActivityPayload: {
+    __typename: { __type: "String!" },
+    activity: { __type: "Activity" },
+    clientMutationId: { __type: "String" },
+    deletedId: { __type: "ID" },
   },
   DeleteAwardInput: {
     clientMutationId: { __type: "String" },
@@ -6128,6 +6375,40 @@ export const generatedSchema = {
     comment: { __type: "Comment" },
     restoredId: { __type: "ID" },
   },
+  RootQueryToActivityConnection: {
+    __typename: { __type: "String!" },
+    edges: { __type: "[RootQueryToActivityConnectionEdge]" },
+    nodes: { __type: "[Activity]" },
+    pageInfo: { __type: "WPPageInfo" },
+  },
+  RootQueryToActivityConnectionEdge: {
+    __typename: { __type: "String!" },
+    cursor: { __type: "String" },
+    node: { __type: "Activity" },
+  },
+  RootQueryToActivityConnectionWhereArgs: {
+    author: { __type: "Int" },
+    authorIn: { __type: "[ID]" },
+    authorName: { __type: "String" },
+    authorNotIn: { __type: "[ID]" },
+    dateQuery: { __type: "DateQueryInput" },
+    hasPassword: { __type: "Boolean" },
+    id: { __type: "Int" },
+    in: { __type: "[ID]" },
+    mimeType: { __type: "MimeTypeEnum" },
+    name: { __type: "String" },
+    nameIn: { __type: "[String]" },
+    notIn: { __type: "[ID]" },
+    orderby: { __type: "[PostObjectsConnectionOrderbyInput]" },
+    parent: { __type: "ID" },
+    parentIn: { __type: "[ID]" },
+    parentNotIn: { __type: "[ID]" },
+    password: { __type: "String" },
+    search: { __type: "String" },
+    stati: { __type: "[PostStatusEnum]" },
+    status: { __type: "PostStatusEnum" },
+    title: { __type: "String" },
+  },
   RootQueryToAwardConnection: {
     __typename: { __type: "String!" },
     edges: { __type: "[RootQueryToAwardConnectionEdge]" },
@@ -7046,6 +7327,22 @@ export const generatedSchema = {
     uri: { __type: "String" },
     $on: { __type: "$UniformResourceIdentifiable!" },
   },
+  UpdateActivityInput: {
+    authorId: { __type: "ID" },
+    clientMutationId: { __type: "String" },
+    date: { __type: "String" },
+    id: { __type: "ID!" },
+    menuOrder: { __type: "Int" },
+    password: { __type: "String" },
+    slug: { __type: "String" },
+    status: { __type: "PostStatusEnum" },
+    title: { __type: "String" },
+  },
+  UpdateActivityPayload: {
+    __typename: { __type: "String!" },
+    activity: { __type: "Activity" },
+    clientMutationId: { __type: "String" },
+  },
   UpdateAwardInput: {
     authorId: { __type: "ID" },
     clientMutationId: { __type: "String" },
@@ -7289,6 +7586,16 @@ export const generatedSchema = {
   },
   User: {
     __typename: { __type: "String!" },
+    activities: {
+      __type: "UserToActivityConnection",
+      __args: {
+        after: "String",
+        before: "String",
+        first: "Int",
+        last: "Int",
+        where: "UserToActivityConnectionWhereArgs",
+      },
+    },
     avatar: {
       __type: "Avatar",
       __args: {
@@ -7411,6 +7718,40 @@ export const generatedSchema = {
     id: { __type: "ID!" },
     isRestricted: { __type: "Boolean" },
     name: { __type: "String" },
+  },
+  UserToActivityConnection: {
+    __typename: { __type: "String!" },
+    edges: { __type: "[UserToActivityConnectionEdge]" },
+    nodes: { __type: "[Activity]" },
+    pageInfo: { __type: "WPPageInfo" },
+  },
+  UserToActivityConnectionEdge: {
+    __typename: { __type: "String!" },
+    cursor: { __type: "String" },
+    node: { __type: "Activity" },
+  },
+  UserToActivityConnectionWhereArgs: {
+    author: { __type: "Int" },
+    authorIn: { __type: "[ID]" },
+    authorName: { __type: "String" },
+    authorNotIn: { __type: "[ID]" },
+    dateQuery: { __type: "DateQueryInput" },
+    hasPassword: { __type: "Boolean" },
+    id: { __type: "Int" },
+    in: { __type: "[ID]" },
+    mimeType: { __type: "MimeTypeEnum" },
+    name: { __type: "String" },
+    nameIn: { __type: "[String]" },
+    notIn: { __type: "[ID]" },
+    orderby: { __type: "[PostObjectsConnectionOrderbyInput]" },
+    parent: { __type: "ID" },
+    parentIn: { __type: "[ID]" },
+    parentNotIn: { __type: "[ID]" },
+    password: { __type: "String" },
+    search: { __type: "String" },
+    stati: { __type: "[PostStatusEnum]" },
+    status: { __type: "PostStatusEnum" },
+    title: { __type: "String" },
   },
   UserToAwardConnection: {
     __typename: { __type: "String!" },
@@ -7717,6 +8058,10 @@ export const generatedSchema = {
   },
   mutation: {
     __typename: { __type: "String!" },
+    createActivity: {
+      __type: "CreateActivityPayload",
+      __args: { input: "CreateActivityInput!" },
+    },
     createAward: {
       __type: "CreateAwardPayload",
       __args: { input: "CreateAwardInput!" },
@@ -7760,6 +8105,10 @@ export const generatedSchema = {
     createUser: {
       __type: "CreateUserPayload",
       __args: { input: "CreateUserInput!" },
+    },
+    deleteActivity: {
+      __type: "DeleteActivityPayload",
+      __args: { input: "DeleteActivityInput!" },
     },
     deleteAward: {
       __type: "DeleteAwardPayload",
@@ -7826,6 +8175,10 @@ export const generatedSchema = {
       __type: "SendPasswordResetEmailPayload",
       __args: { input: "SendPasswordResetEmailInput!" },
     },
+    updateActivity: {
+      __type: "UpdateActivityPayload",
+      __args: { input: "UpdateActivityInput!" },
+    },
     updateAward: {
       __type: "UpdateAwardPayload",
       __args: { input: "UpdateAwardInput!" },
@@ -7877,6 +8230,24 @@ export const generatedSchema = {
   },
   query: {
     __typename: { __type: "String!" },
+    activities: {
+      __type: "RootQueryToActivityConnection",
+      __args: {
+        after: "String",
+        before: "String",
+        first: "Int",
+        last: "Int",
+        where: "RootQueryToActivityConnectionWhereArgs",
+      },
+    },
+    activity: {
+      __type: "Activity",
+      __args: { asPreview: "Boolean", id: "ID!", idType: "ActivityIdType" },
+    },
+    activityBy: {
+      __type: "Activity",
+      __args: { activityId: "Int", id: "ID", slug: "String", uri: "String" },
+    },
     allSettings: { __type: "Settings" },
     atlasContentModelerSettingsSettings: {
       __type: "AtlasContentModelerSettingsSettings",
@@ -8187,8 +8558,17 @@ export const generatedSchema = {
   },
   subscription: {},
   [SchemaUnionsKey]: {
-    ContentNode: ["Award", "Cookie", "MediaItem", "Page", "Post", "Scout"],
+    ContentNode: [
+      "Activity",
+      "Award",
+      "Cookie",
+      "MediaItem",
+      "Page",
+      "Post",
+      "Scout",
+    ],
     DatabaseIdentifier: [
+      "Activity",
       "Award",
       "Category",
       "Comment",
@@ -8204,6 +8584,7 @@ export const generatedSchema = {
       "User",
     ],
     Node: [
+      "Activity",
       "Award",
       "Category",
       "Comment",
@@ -8226,10 +8607,27 @@ export const generatedSchema = {
       "User",
       "UserRole",
     ],
-    NodeWithAuthor: ["Award", "MediaItem", "Page", "Post", "Scout"],
-    NodeWithTemplate: ["Award", "Cookie", "MediaItem", "Page", "Post", "Scout"],
-    NodeWithTitle: ["Award", "Cookie", "MediaItem", "Page", "Post", "Scout"],
+    NodeWithAuthor: ["Activity", "Award", "MediaItem", "Page", "Post", "Scout"],
+    NodeWithTemplate: [
+      "Activity",
+      "Award",
+      "Cookie",
+      "MediaItem",
+      "Page",
+      "Post",
+      "Scout",
+    ],
+    NodeWithTitle: [
+      "Activity",
+      "Award",
+      "Cookie",
+      "MediaItem",
+      "Page",
+      "Post",
+      "Scout",
+    ],
     UniformResourceIdentifiable: [
+      "Activity",
       "Award",
       "Category",
       "ContentType",
@@ -8286,6 +8684,200 @@ export interface AcfFieldGroup {
    */
   fieldGroupName?: Maybe<ScalarsEnums["String"]>;
   $on: $AcfFieldGroup;
+}
+
+/**
+ * The activity type
+ */
+export interface Activity {
+  __typename?: "Activity";
+  /**
+   * The id field matches the WP_Post-&gt;ID field.
+   * @deprecated Deprecated in favor of the databaseId field
+   */
+  activityId: ScalarsEnums["Int"];
+  activityLocation?: Maybe<ScalarsEnums["String"]>;
+  activityName?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * Connection between the NodeWithAuthor type and the User type
+   */
+  author?: Maybe<NodeWithAuthorToUserConnectionEdge>;
+  /**
+   * The database identifier of the author of the node
+   */
+  authorDatabaseId?: Maybe<ScalarsEnums["Int"]>;
+  /**
+   * The globally unique identifier of the author of the node
+   */
+  authorId?: Maybe<ScalarsEnums["ID"]>;
+  /**
+   * @deprecated Deprecated in favor of using Next.js pages
+   */
+  conditionalTags?: Maybe<ConditionalTags>;
+  /**
+   * Connection between the ContentNode type and the ContentType type
+   */
+  contentType?: Maybe<ContentNodeToContentTypeConnectionEdge>;
+  /**
+   * The name of the Content Type the node belongs to
+   */
+  contentTypeName: ScalarsEnums["String"];
+  /**
+   * The unique identifier stored in the database
+   */
+  databaseId: ScalarsEnums["Int"];
+  /**
+   * Post publishing date.
+   */
+  date?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The publishing date set in GMT.
+   */
+  dateGmt?: Maybe<ScalarsEnums["String"]>;
+  dateOfActivity?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The desired slug of the post
+   */
+  desiredSlug?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * If a user has edited the node within the past 15 seconds, this will return the user that last edited. Null if the edit lock doesn&#039;t exist or is greater than 15 seconds
+   */
+  editingLockedBy?: Maybe<ContentNodeToEditLockConnectionEdge>;
+  /**
+   * The RSS enclosure for the object
+   */
+  enclosure?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * Connection between the ContentNode type and the EnqueuedScript type
+   */
+  enqueuedScripts: (args?: {
+    /**
+     * Cursor used along with the "first" argument to reference where in the dataset to get data
+     */
+    after?: Maybe<Scalars["String"]>;
+    /**
+     * Cursor used along with the "last" argument to reference where in the dataset to get data
+     */
+    before?: Maybe<Scalars["String"]>;
+    /**
+     * The number of items to return after the referenced "after" cursor
+     */
+    first?: Maybe<Scalars["Int"]>;
+    /**
+     * The number of items to return before the referenced "before" cursor
+     */
+    last?: Maybe<Scalars["Int"]>;
+  }) => Maybe<ContentNodeToEnqueuedScriptConnection>;
+  /**
+   * Connection between the ContentNode type and the EnqueuedStylesheet type
+   */
+  enqueuedStylesheets: (args?: {
+    /**
+     * Cursor used along with the "first" argument to reference where in the dataset to get data
+     */
+    after?: Maybe<Scalars["String"]>;
+    /**
+     * Cursor used along with the "last" argument to reference where in the dataset to get data
+     */
+    before?: Maybe<Scalars["String"]>;
+    /**
+     * The number of items to return after the referenced "after" cursor
+     */
+    first?: Maybe<Scalars["Int"]>;
+    /**
+     * The number of items to return before the referenced "before" cursor
+     */
+    last?: Maybe<Scalars["Int"]>;
+  }) => Maybe<ContentNodeToEnqueuedStylesheetConnection>;
+  /**
+   * The global unique identifier for this post. This currently matches the value stored in WP_Post-&gt;guid and the guid column in the &quot;post_objects&quot; database table.
+   */
+  guid?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The globally unique identifier of the activity object.
+   */
+  id: ScalarsEnums["ID"];
+  /**
+   * Whether the node is a Content Node
+   */
+  isContentNode: ScalarsEnums["Boolean"];
+  /**
+   * Whether the object is a node in the preview state
+   */
+  isPreview?: Maybe<ScalarsEnums["Boolean"]>;
+  /**
+   * Whether the object is restricted from the current viewer
+   */
+  isRestricted?: Maybe<ScalarsEnums["Boolean"]>;
+  /**
+   * Whether the node is a Term
+   */
+  isTermNode: ScalarsEnums["Boolean"];
+  /**
+   * The user that most recently edited the node
+   */
+  lastEditedBy?: Maybe<ContentNodeToEditLastConnectionEdge>;
+  /**
+   * The permalink of the post
+   */
+  link?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The local modified time for a post. If a post was recently updated the modified field will change to match the corresponding time.
+   */
+  modified?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The GMT modified time for a post. If a post was recently updated the modified field will change to match the corresponding time in GMT.
+   */
+  modifiedGmt?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * Connection between the activity type and the activity type
+   */
+  preview?: Maybe<ActivityToPreviewConnectionEdge>;
+  /**
+   * The database id of the preview node
+   */
+  previewRevisionDatabaseId?: Maybe<ScalarsEnums["Int"]>;
+  /**
+   * Whether the object is a node in the preview state
+   */
+  previewRevisionId?: Maybe<ScalarsEnums["ID"]>;
+  /**
+   * The uri slug for the post. This is equivalent to the WP_Post-&gt;post_name field and the post_name column in the database for the &quot;post_objects&quot; table.
+   */
+  slug?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The current status of the object
+   */
+  status?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The template assigned to the node
+   */
+  template?: Maybe<ContentTemplate>;
+  templates?: Maybe<Array<Maybe<ScalarsEnums["String"]>>>;
+  /**
+   * The title of the post. This is currently just the raw title. An amendment to support rendered title needs to be made.
+   */
+  title: (args?: {
+    /**
+     * Format of the field output
+     */
+    format?: Maybe<PostObjectFieldFormatEnum>;
+  }) => Maybe<ScalarsEnums["String"]>;
+  /**
+   * The unique resource identifier path
+   */
+  uri?: Maybe<ScalarsEnums["String"]>;
+}
+
+/**
+ * Connection between the activity type and the activity type
+ */
+export interface ActivityToPreviewConnectionEdge {
+  __typename?: "ActivityToPreviewConnectionEdge";
+  /**
+   * The node of the connection, without the edges
+   */
+  node?: Maybe<Activity>;
 }
 
 /**
@@ -9103,6 +9695,24 @@ export interface Comment {
 export interface CommentAuthor {
   __typename?: "CommentAuthor";
   /**
+   * Avatar object for user. The avatar object can be retrieved in different sizes by specifying the size argument.
+   */
+  avatar: (args?: {
+    /**
+     * Whether to always show the default image, never the Gravatar. Default false
+     */
+    forceDefault?: Maybe<Scalars["Boolean"]>;
+    /**
+     * The rating level of the avatar.
+     */
+    rating?: Maybe<AvatarRatingEnum>;
+    /**
+     * The size attribute of the avatar field can be used to fetch avatars of different sizes. The value corresponds to the dimension in pixels to fetch. The default is 96 pixels.
+     * @defaultValue `96`
+     */
+    size?: Maybe<Scalars["Int"]>;
+  }) => Maybe<Avatar>;
+  /**
    * Identifies the primary key from the database.
    */
   databaseId: ScalarsEnums["Int"];
@@ -9200,6 +9810,10 @@ export interface CommentToParentCommentConnectionEdge {
  */
 export interface Commenter {
   __typename?: "CommentAuthor" | "User";
+  /**
+   * Avatar object for user. The avatar object can be retrieved in different sizes by specifying the size argument.
+   */
+  avatar?: Maybe<Avatar>;
   /**
    * Identifies the primary key from the database.
    */
@@ -9348,7 +9962,14 @@ export interface ConditionalTags {
  * Nodes used to manage content
  */
 export interface ContentNode {
-  __typename?: "Award" | "Cookie" | "MediaItem" | "Page" | "Post" | "Scout";
+  __typename?:
+    | "Activity"
+    | "Award"
+    | "Cookie"
+    | "MediaItem"
+    | "Page"
+    | "Post"
+    | "Scout";
   /**
    * @deprecated Deprecated in favor of using Next.js pages
    */
@@ -10088,6 +10709,21 @@ export interface Cookie_Cookieinfo {
 }
 
 /**
+ * The payload for the createActivity mutation
+ */
+export interface CreateActivityPayload {
+  __typename?: "CreateActivityPayload";
+  /**
+   * The Post object mutation type.
+   */
+  activity?: Maybe<Activity>;
+  /**
+   * If a &#039;clientMutationId&#039; input is provided to the mutation, it will be returned as output on the mutation. This ID can be used by the client to track the progress of mutations and catch possible duplicate mutation submissions.
+   */
+  clientMutationId?: Maybe<ScalarsEnums["String"]>;
+}
+
+/**
  * The payload for the createAward mutation
  */
 export interface CreateAwardPayload {
@@ -10261,6 +10897,7 @@ export interface CreateUserPayload {
  */
 export interface DatabaseIdentifier {
   __typename?:
+    | "Activity"
     | "Award"
     | "Category"
     | "Comment"
@@ -10290,6 +10927,25 @@ export interface DefaultTemplate {
    * The name of the template
    */
   templateName?: Maybe<ScalarsEnums["String"]>;
+}
+
+/**
+ * The payload for the deleteActivity mutation
+ */
+export interface DeleteActivityPayload {
+  __typename?: "DeleteActivityPayload";
+  /**
+   * The object before it was deleted
+   */
+  activity?: Maybe<Activity>;
+  /**
+   * If a &#039;clientMutationId&#039; input is provided to the mutation, it will be returned as output on the mutation. This ID can be used by the client to track the progress of mutations and catch possible duplicate mutation submissions.
+   */
+  clientMutationId?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The ID of the deleted object
+   */
+  deletedId?: Maybe<ScalarsEnums["ID"]>;
 }
 
 /**
@@ -11662,6 +12318,7 @@ export interface MenuToMenuItemConnectionEdge {
  */
 export interface Node {
   __typename?:
+    | "Activity"
     | "Award"
     | "Category"
     | "Comment"
@@ -11694,7 +12351,7 @@ export interface Node {
  * A node that can have an author assigned to it
  */
 export interface NodeWithAuthor {
-  __typename?: "Award" | "MediaItem" | "Page" | "Post" | "Scout";
+  __typename?: "Activity" | "Award" | "MediaItem" | "Page" | "Post" | "Scout";
   /**
    * Connection between the NodeWithAuthor type and the User type
    */
@@ -11988,7 +12645,14 @@ export interface NodeWithRevisionsToContentNodeConnectionEdge {
  * A node that can have a template associated with it
  */
 export interface NodeWithTemplate {
-  __typename?: "Award" | "Cookie" | "MediaItem" | "Page" | "Post" | "Scout";
+  __typename?:
+    | "Activity"
+    | "Award"
+    | "Cookie"
+    | "MediaItem"
+    | "Page"
+    | "Post"
+    | "Scout";
   /**
    * The template assigned to the node
    */
@@ -12000,7 +12664,14 @@ export interface NodeWithTemplate {
  * A node that NodeWith a title
  */
 export interface NodeWithTitle {
-  __typename?: "Award" | "Cookie" | "MediaItem" | "Page" | "Post" | "Scout";
+  __typename?:
+    | "Activity"
+    | "Award"
+    | "Cookie"
+    | "MediaItem"
+    | "Page"
+    | "Post"
+    | "Scout";
   /**
    * The title of the post. This is currently just the raw title. An amendment to support rendered title needs to be made.
    */
@@ -13520,6 +14191,40 @@ export interface RestoreCommentPayload {
    * The ID of the restored comment
    */
   restoredId?: Maybe<ScalarsEnums["ID"]>;
+}
+
+/**
+ * Connection between the RootQuery type and the activity type
+ */
+export interface RootQueryToActivityConnection {
+  __typename?: "RootQueryToActivityConnection";
+  /**
+   * Edges for the RootQueryToActivityConnection connection
+   */
+  edges?: Maybe<Array<Maybe<RootQueryToActivityConnectionEdge>>>;
+  /**
+   * The nodes of the connection, without the edges
+   */
+  nodes?: Maybe<Array<Maybe<Activity>>>;
+  /**
+   * Information about pagination in a connection.
+   */
+  pageInfo?: Maybe<WPPageInfo>;
+}
+
+/**
+ * An edge in a connection
+ */
+export interface RootQueryToActivityConnectionEdge {
+  __typename?: "RootQueryToActivityConnectionEdge";
+  /**
+   * A cursor for use in pagination
+   */
+  cursor?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The item at the end of the edge
+   */
+  node?: Maybe<Activity>;
 }
 
 /**
@@ -15237,6 +15942,7 @@ export interface Theme {
  */
 export interface UniformResourceIdentifiable {
   __typename?:
+    | "Activity"
     | "Award"
     | "Category"
     | "ContentType"
@@ -15270,6 +15976,21 @@ export interface UniformResourceIdentifiable {
    */
   uri?: Maybe<ScalarsEnums["String"]>;
   $on: $UniformResourceIdentifiable;
+}
+
+/**
+ * The payload for the updateActivity mutation
+ */
+export interface UpdateActivityPayload {
+  __typename?: "UpdateActivityPayload";
+  /**
+   * The Post object mutation type.
+   */
+  activity?: Maybe<Activity>;
+  /**
+   * If a &#039;clientMutationId&#039; input is provided to the mutation, it will be returned as output on the mutation. This ID can be used by the client to track the progress of mutations and catch possible duplicate mutation submissions.
+   */
+  clientMutationId?: Maybe<ScalarsEnums["String"]>;
 }
 
 /**
@@ -15421,7 +16142,7 @@ export interface UpdateSettingsPayload {
    */
   allSettings?: Maybe<Settings>;
   /**
-   * Update the atlasContentModelerSettings setting.
+   * Update the AtlasContentModelerSettingsSettings setting.
    */
   atlasContentModelerSettingsSettings?: Maybe<AtlasContentModelerSettingsSettings>;
   /**
@@ -15429,23 +16150,23 @@ export interface UpdateSettingsPayload {
    */
   clientMutationId?: Maybe<ScalarsEnums["String"]>;
   /**
-   * Update the discussion setting.
+   * Update the DiscussionSettings setting.
    */
   discussionSettings?: Maybe<DiscussionSettings>;
   /**
-   * Update the general setting.
+   * Update the GeneralSettings setting.
    */
   generalSettings?: Maybe<GeneralSettings>;
   /**
-   * Update the genesisBlocksGlobalSettings setting.
+   * Update the GenesisBlocksGlobalSettingsSettings setting.
    */
   genesisBlocksGlobalSettingsSettings?: Maybe<GenesisBlocksGlobalSettingsSettings>;
   /**
-   * Update the reading setting.
+   * Update the ReadingSettings setting.
    */
   readingSettings?: Maybe<ReadingSettings>;
   /**
-   * Update the writing setting.
+   * Update the WritingSettings setting.
    */
   writingSettings?: Maybe<WritingSettings>;
 }
@@ -15485,6 +16206,31 @@ export interface UpdateUserPayload {
  */
 export interface User {
   __typename?: "User";
+  /**
+   * Connection between the User type and the activity type
+   */
+  activities: (args?: {
+    /**
+     * Cursor used along with the "first" argument to reference where in the dataset to get data
+     */
+    after?: Maybe<Scalars["String"]>;
+    /**
+     * Cursor used along with the "last" argument to reference where in the dataset to get data
+     */
+    before?: Maybe<Scalars["String"]>;
+    /**
+     * The number of items to return after the referenced "after" cursor
+     */
+    first?: Maybe<Scalars["Int"]>;
+    /**
+     * The number of items to return before the referenced "before" cursor
+     */
+    last?: Maybe<Scalars["Int"]>;
+    /**
+     * Arguments for filtering the connection
+     */
+    where?: Maybe<UserToActivityConnectionWhereArgs>;
+  }) => Maybe<UserToActivityConnection>;
   /**
    * Avatar object for user. The avatar object can be retrieved in different sizes by specifying the size argument.
    */
@@ -15862,6 +16608,40 @@ export interface UserRole {
    * The registered name of the role
    */
   name?: Maybe<ScalarsEnums["String"]>;
+}
+
+/**
+ * Connection between the User type and the activity type
+ */
+export interface UserToActivityConnection {
+  __typename?: "UserToActivityConnection";
+  /**
+   * Edges for the UserToActivityConnection connection
+   */
+  edges?: Maybe<Array<Maybe<UserToActivityConnectionEdge>>>;
+  /**
+   * The nodes of the connection, without the edges
+   */
+  nodes?: Maybe<Array<Maybe<Activity>>>;
+  /**
+   * Information about pagination in a connection.
+   */
+  pageInfo?: Maybe<WPPageInfo>;
+}
+
+/**
+ * An edge in a connection
+ */
+export interface UserToActivityConnectionEdge {
+  __typename?: "UserToActivityConnectionEdge";
+  /**
+   * A cursor for use in pagination
+   */
+  cursor?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The item at the end of the edge
+   */
+  node?: Maybe<Activity>;
 }
 
 /**
@@ -16248,6 +17028,9 @@ export interface WritingSettings {
 
 export interface Mutation {
   __typename?: "Mutation";
+  createActivity: (args: {
+    input: CreateActivityInput;
+  }) => Maybe<CreateActivityPayload>;
   createAward: (args: { input: CreateAwardInput }) => Maybe<CreateAwardPayload>;
   createCategory: (args: {
     input: CreateCategoryInput;
@@ -16269,6 +17052,9 @@ export interface Mutation {
   createScout: (args: { input: CreateScoutInput }) => Maybe<CreateScoutPayload>;
   createTag: (args: { input: CreateTagInput }) => Maybe<CreateTagPayload>;
   createUser: (args: { input: CreateUserInput }) => Maybe<CreateUserPayload>;
+  deleteActivity: (args: {
+    input: DeleteActivityInput;
+  }) => Maybe<DeleteActivityPayload>;
   deleteAward: (args: { input: DeleteAwardInput }) => Maybe<DeleteAwardPayload>;
   deleteCategory: (args: {
     input: DeleteCategoryInput;
@@ -16308,6 +17094,9 @@ export interface Mutation {
   sendPasswordResetEmail: (args: {
     input: SendPasswordResetEmailInput;
   }) => Maybe<SendPasswordResetEmailPayload>;
+  updateActivity: (args: {
+    input: UpdateActivityInput;
+  }) => Maybe<UpdateActivityPayload>;
   updateAward: (args: { input: UpdateAwardInput }) => Maybe<UpdateAwardPayload>;
   updateCategory: (args: {
     input: UpdateCategoryInput;
@@ -16336,6 +17125,24 @@ export interface Mutation {
 
 export interface Query {
   __typename?: "Query";
+  activities: (args?: {
+    after?: Maybe<Scalars["String"]>;
+    before?: Maybe<Scalars["String"]>;
+    first?: Maybe<Scalars["Int"]>;
+    last?: Maybe<Scalars["Int"]>;
+    where?: Maybe<RootQueryToActivityConnectionWhereArgs>;
+  }) => Maybe<RootQueryToActivityConnection>;
+  activity: (args: {
+    asPreview?: Maybe<Scalars["Boolean"]>;
+    id: Scalars["ID"];
+    idType?: Maybe<ActivityIdType>;
+  }) => Maybe<Activity>;
+  activityBy: (args?: {
+    activityId?: Maybe<Scalars["Int"]>;
+    id?: Maybe<Scalars["ID"]>;
+    slug?: Maybe<Scalars["String"]>;
+    uri?: Maybe<Scalars["String"]>;
+  }) => Maybe<Activity>;
   allSettings?: Maybe<Settings>;
   atlasContentModelerSettingsSettings?: Maybe<AtlasContentModelerSettingsSettings>;
   award: (args: {
@@ -16623,6 +17430,8 @@ export interface Subscription {
 }
 
 export interface SchemaObjectTypes {
+  Activity: Activity;
+  ActivityToPreviewConnectionEdge: ActivityToPreviewConnectionEdge;
   AtlasContentModelerSettingsSettings: AtlasContentModelerSettingsSettings;
   Avatar: Avatar;
   Award: Award;
@@ -16663,6 +17472,7 @@ export interface SchemaObjectTypes {
   Cookie: Cookie;
   CookieToPreviewConnectionEdge: CookieToPreviewConnectionEdge;
   Cookie_Cookieinfo: Cookie_Cookieinfo;
+  CreateActivityPayload: CreateActivityPayload;
   CreateAwardPayload: CreateAwardPayload;
   CreateCategoryPayload: CreateCategoryPayload;
   CreateCommentPayload: CreateCommentPayload;
@@ -16675,6 +17485,7 @@ export interface SchemaObjectTypes {
   CreateTagPayload: CreateTagPayload;
   CreateUserPayload: CreateUserPayload;
   DefaultTemplate: DefaultTemplate;
+  DeleteActivityPayload: DeleteActivityPayload;
   DeleteAwardPayload: DeleteAwardPayload;
   DeleteCategoryPayload: DeleteCategoryPayload;
   DeleteCommentPayload: DeleteCommentPayload;
@@ -16748,6 +17559,8 @@ export interface SchemaObjectTypes {
   RegisterUserPayload: RegisterUserPayload;
   ResetUserPasswordPayload: ResetUserPasswordPayload;
   RestoreCommentPayload: RestoreCommentPayload;
+  RootQueryToActivityConnection: RootQueryToActivityConnection;
+  RootQueryToActivityConnectionEdge: RootQueryToActivityConnectionEdge;
   RootQueryToAwardConnection: RootQueryToAwardConnection;
   RootQueryToAwardConnectionEdge: RootQueryToAwardConnectionEdge;
   RootQueryToCategoryConnection: RootQueryToCategoryConnection;
@@ -16814,6 +17627,7 @@ export interface SchemaObjectTypes {
   TermNodeToEnqueuedStylesheetConnection: TermNodeToEnqueuedStylesheetConnection;
   TermNodeToEnqueuedStylesheetConnectionEdge: TermNodeToEnqueuedStylesheetConnectionEdge;
   Theme: Theme;
+  UpdateActivityPayload: UpdateActivityPayload;
   UpdateAwardPayload: UpdateAwardPayload;
   UpdateCategoryPayload: UpdateCategoryPayload;
   UpdateCommentPayload: UpdateCommentPayload;
@@ -16828,6 +17642,8 @@ export interface SchemaObjectTypes {
   UpdateUserPayload: UpdateUserPayload;
   User: User;
   UserRole: UserRole;
+  UserToActivityConnection: UserToActivityConnection;
+  UserToActivityConnectionEdge: UserToActivityConnectionEdge;
   UserToAwardConnection: UserToAwardConnection;
   UserToAwardConnectionEdge: UserToAwardConnectionEdge;
   UserToCommentConnection: UserToCommentConnection;
@@ -16852,6 +17668,8 @@ export interface SchemaObjectTypes {
   WritingSettings: WritingSettings;
 }
 export type SchemaObjectTypesNames =
+  | "Activity"
+  | "ActivityToPreviewConnectionEdge"
   | "AtlasContentModelerSettingsSettings"
   | "Avatar"
   | "Award"
@@ -16892,6 +17710,7 @@ export type SchemaObjectTypesNames =
   | "Cookie"
   | "CookieToPreviewConnectionEdge"
   | "Cookie_Cookieinfo"
+  | "CreateActivityPayload"
   | "CreateAwardPayload"
   | "CreateCategoryPayload"
   | "CreateCommentPayload"
@@ -16904,6 +17723,7 @@ export type SchemaObjectTypesNames =
   | "CreateTagPayload"
   | "CreateUserPayload"
   | "DefaultTemplate"
+  | "DeleteActivityPayload"
   | "DeleteAwardPayload"
   | "DeleteCategoryPayload"
   | "DeleteCommentPayload"
@@ -16977,6 +17797,8 @@ export type SchemaObjectTypesNames =
   | "RegisterUserPayload"
   | "ResetUserPasswordPayload"
   | "RestoreCommentPayload"
+  | "RootQueryToActivityConnection"
+  | "RootQueryToActivityConnectionEdge"
   | "RootQueryToAwardConnection"
   | "RootQueryToAwardConnectionEdge"
   | "RootQueryToCategoryConnection"
@@ -17043,6 +17865,7 @@ export type SchemaObjectTypesNames =
   | "TermNodeToEnqueuedStylesheetConnection"
   | "TermNodeToEnqueuedStylesheetConnectionEdge"
   | "Theme"
+  | "UpdateActivityPayload"
   | "UpdateAwardPayload"
   | "UpdateCategoryPayload"
   | "UpdateCommentPayload"
@@ -17057,6 +17880,8 @@ export type SchemaObjectTypesNames =
   | "UpdateUserPayload"
   | "User"
   | "UserRole"
+  | "UserToActivityConnection"
+  | "UserToActivityConnectionEdge"
   | "UserToAwardConnection"
   | "UserToAwardConnectionEdge"
   | "UserToCommentConnection"
@@ -17090,6 +17915,7 @@ export interface $Commenter {
 }
 
 export interface $ContentNode {
+  Activity?: Activity;
   Award?: Award;
   Cookie?: Cookie;
   MediaItem?: MediaItem;
@@ -17108,6 +17934,7 @@ export interface $ContentTemplate {
 }
 
 export interface $DatabaseIdentifier {
+  Activity?: Activity;
   Award?: Award;
   Category?: Category;
   Comment?: Comment;
@@ -17156,6 +17983,7 @@ export interface $MenuItemObjectUnion {
 }
 
 export interface $Node {
+  Activity?: Activity;
   Award?: Award;
   Category?: Category;
   Comment?: Comment;
@@ -17180,6 +18008,7 @@ export interface $Node {
 }
 
 export interface $NodeWithAuthor {
+  Activity?: Activity;
   Award?: Award;
   MediaItem?: MediaItem;
   Page?: Page;
@@ -17219,6 +18048,7 @@ export interface $NodeWithRevisions {
 }
 
 export interface $NodeWithTemplate {
+  Activity?: Activity;
   Award?: Award;
   Cookie?: Cookie;
   MediaItem?: MediaItem;
@@ -17228,6 +18058,7 @@ export interface $NodeWithTemplate {
 }
 
 export interface $NodeWithTitle {
+  Activity?: Activity;
   Award?: Award;
   Cookie?: Cookie;
   MediaItem?: MediaItem;
@@ -17247,6 +18078,7 @@ export interface $TermNode {
 }
 
 export interface $UniformResourceIdentifiable {
+  Activity?: Activity;
   Award?: Award;
   Category?: Category;
   ContentType?: ContentType;
@@ -17271,6 +18103,7 @@ export type MakeNullable<T> = {
 };
 
 export interface ScalarsEnums extends MakeNullable<Scalars> {
+  ActivityIdType: ActivityIdType | undefined;
   AvatarRatingEnum: AvatarRatingEnum | undefined;
   AwardIdType: AwardIdType | undefined;
   CategoryIdType: CategoryIdType | undefined;
