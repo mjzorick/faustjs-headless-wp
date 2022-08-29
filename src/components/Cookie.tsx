@@ -4,7 +4,6 @@ import { client, Cookie } from 'client';
 
 interface Props {
   data: Cookie
-
 }
 
 function Cookie({
