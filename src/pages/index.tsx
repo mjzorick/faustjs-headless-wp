@@ -42,18 +42,7 @@ export default function Page() {
           id={styles.home_hero}
         >
           <p>
-            WP&nbsp;Engine’s Faust.js Framework includes this example
-            project, the{' '}
-            <a href="https://wordpress.org/plugins/faustwp/">
-              FaustWP plugin
-            </a>
-            ,{' '}
-            <a href="https://github.com/wpengine/faustjs">headless packages</a>,
-            and{' '}
-            <a href="https://faustjs.org/docs/tutorial/dev-env-setup">
-              tutorials
-            </a>{' '}
-            to make building headless WordPress sites fast and fun.
+            Working with and getting to know headless...
           </p>
         </Hero>
         <section className={styles.explore}>
