@@ -11,7 +11,6 @@ export default function Page() {
   const generalSettings = useQuery().generalSettings;
   const awards = useQuery().awards().nodes;
 
-
   return (
     <>
       <Header
