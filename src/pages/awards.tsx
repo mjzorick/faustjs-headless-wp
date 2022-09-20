@@ -19,7 +19,7 @@ export default function Page() {
         description={generalSettings.description}
       />
 
-      <h2>Service Awards</h2>
+      <h2>Service Awards 2023</h2>
       
       {awards.map(award => <Award data = {award} key = {award.id ?? ''} /> )}
 
