@@ -19,7 +19,7 @@ export default function Page(): JSX.Element {
             <div>
               <p>
                 The page you were looking for does not exist or is no longer
-                available.
+                available. Doh!
               </p>
             </div>
           </div>
